@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+// App.js
+import React, { useState, useEffect } from "react";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
 
@@ -16,9 +17,9 @@ const defaultWagons = [
 const App = () => {
   const [wagons, setWagons] = useState(defaultWagons);
   const [schedule, setSchedule] = useState(createInitialSchedule());
+  const [employeesList, setEmployeesList] = useState([]);
 
   function createInitialSchedule() {
-    // Create an initial schedule with empty shifts
     const initialSchedule = {};
     wagons.forEach((wagon) => {
       initialSchedule[wagon] = {
@@ -35,19 +36,48 @@ const App = () => {
   }
 
   const handleAddEmployee = (employee) => {
-    setWagons([...wagons, employee]);
-    setSchedule({
-      ...schedule,
-      [employee]: createInitialSchedule()[employee],
+    setEmployeesList([...employeesList, employee]);
+  };
+
+  const handleAssignEmployee = (wagon, day, shiftType, employee) => {
+    setSchedule((prevSchedule) => {
+      const newSchedule = { ...prevSchedule };
+
+      // Ensure the wagon and day are initialized
+      if (!newSchedule[wagon]) {
+        newSchedule[wagon] = {};
+      }
+      if (!newSchedule[wagon][day]) {
+        newSchedule[wagon][day] = { morning: "", afternoon: "" };
+      }
+
+      // Update the employee for the specified shift
+      newSchedule[wagon][day][shiftType] = employee;
+
+      console.log("Updated Schedule:", newSchedule); // Log the updated schedule
+      return newSchedule;
     });
   };
+
+  useEffect(() => {
+    setSchedule(createInitialSchedule());
+  }, [wagons]);
 
   return (
     <div>
       <h1>Workplace Schedule Maker</h1>
       <div style={{ display: "flex" }}>
-        <AddEmployeeForm onAddEmployee={handleAddEmployee} />
-        <ScheduleTable wagons={wagons} schedule={schedule} />
+        <AddEmployeeForm
+          onAddEmployee={handleAddEmployee}
+          employeesList={employeesList}
+          wagons={wagons}
+        />
+        <ScheduleTable
+          wagons={wagons}
+          schedule={schedule}
+          employeesList={employeesList}
+          onAssignEmployee={handleAssignEmployee}
+        />
       </div>
     </div>
   );
