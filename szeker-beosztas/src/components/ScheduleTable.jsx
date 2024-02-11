@@ -1,5 +1,5 @@
 // ScheduleTable.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,45 +11,51 @@ import {
   Box,
   Select,
   MenuItem,
+  Button,
 } from "@mui/material";
+import "./ScheduleTable.css";
+import { sortEmployeesIntoSchedule } from "./scheduleUtils";
 
 const ScheduleTable = ({
   wagons,
+  days,
   schedule,
   employeesList,
   onAssignEmployee,
 }) => {
-  let days = [
-    "Hétfő",
-    "Kedd",
-    "Szerda",
-    "Csütörtök",
-    "Péntek",
-    "Szombat",
-    "Vasárnap",
-  ];
-
   const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
     onAssignEmployee(wagon, day, shiftType, employee);
   };
 
+  const [sortedSchedule, setSortedSchedule] = useState(schedule);
+
+  useEffect(() => {
+    setSortedSchedule(schedule);
+  }, [schedule]);
+
+  const handleSortEmployees = () => {
+    const updatedSchedule = sortEmployeesIntoSchedule(
+      { ...schedule },
+      employeesList
+    );
+    setSortedSchedule(updatedSchedule);
+    console.log("Sorted Schedule:", sortedSchedule);
+    // You may want to update the state or perform any other actions based on the sorted schedule
+  };
+
   return (
-    <div>
+    <div className="schedule-table">
       <TableContainer component={Paper}>
-        <Table style={{ borderCollapse: "collapse" }}>
+        <Table
+          className="schedule-table"
+          style={{ borderCollapse: "collapse" }}
+        >
           <TableHead>
             <TableRow>
-              <TableCell style={{ border: "1px solid #ddd", padding: "8px" }}>
-                Wagon
-              </TableCell>
-              <TableCell style={{ border: "1px solid #ddd", padding: "8px" }}>
-                Shifts
-              </TableCell>
+              <TableCell className="schedule-cell">Szekér</TableCell>
+              <TableCell className="schedule-cell">Műszak</TableCell>
               {days.map((day) => (
-                <TableCell
-                  key={day}
-                  style={{ border: "1px solid #ddd", padding: "8px" }}
-                >
+                <TableCell key={day} className="schedule-cell">
                   {day}
                 </TableCell>
               ))}
@@ -59,25 +65,19 @@ const ScheduleTable = ({
             {wagons.map((wagon) => (
               <React.Fragment key={wagon}>
                 <TableRow>
-                  <TableCell
-                    rowSpan={2}
-                    style={{ border: "1px solid #ddd", padding: "8px" }}
-                  >
+                  <TableCell rowSpan={2} className="cell">
                     {wagon}
                   </TableCell>
-                  <TableCell
-                    style={{ border: "1px solid #ddd", padding: "8px" }}
-                  >
-                    Morning
-                  </TableCell>
+                  <TableCell className="cell">D.előtt</TableCell>
                   {days.map((day) => (
                     <TableCell
                       key={`${wagon}-${day}-morning`}
-                      style={{ border: "1px solid #ddd", padding: "8px" }}
+                      className="schedule-cell"
                     >
                       <Select
+                        className="schedule-select"
                         labelId={`${wagon}-${day}-morning-label`}
-                        value={schedule[wagon]?.[day]?.morning || ""}
+                        value={sortedSchedule[wagon]?.[day]?.morning || ""}
                         onChange={(e) =>
                           handleAssignEmployeeToCell(
                             wagon,
@@ -100,19 +100,16 @@ const ScheduleTable = ({
                   ))}
                 </TableRow>
                 <TableRow>
-                  <TableCell
-                    style={{ border: "1px solid #ddd", padding: "8px" }}
-                  >
-                    Afternoon
-                  </TableCell>
+                  <TableCell className="schedule-cell">D.után</TableCell>
                   {days.map((day) => (
                     <TableCell
                       key={`${wagon}-${day}-afternoon`}
-                      style={{ border: "1px solid #ddd", padding: "8px" }}
+                      className="schedule-cell"
                     >
                       <Select
+                        className="schedule-select"
                         labelId={`${wagon}-${day}-afternoon-label`}
-                        value={schedule[wagon]?.[day]?.afternoon || ""}
+                        value={sortedSchedule[wagon]?.[day]?.afternoon || ""}
                         onChange={(e) =>
                           handleAssignEmployeeToCell(
                             wagon,
@@ -139,8 +136,15 @@ const ScheduleTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <Box mt={2} p={2} border={1} borderColor="grey.300">
+      <Box className="notes-box">
         <h2>Notes</h2>
+        <Button
+          onClick={handleSortEmployees}
+          variant="contained"
+          color="primary"
+        >
+          Beoszt
+        </Button>
       </Box>
     </div>
   );

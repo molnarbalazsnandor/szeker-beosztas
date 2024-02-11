@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
+import { sortEmployeesIntoSchedule } from "./components/scheduleUtils";
 
 const defaultWagons = [
   "Dávid",
@@ -14,6 +15,16 @@ const defaultWagons = [
   "Manfréd",
 ];
 
+const days = [
+  "Hétfő",
+  "Kedd",
+  "Szerda",
+  "Csütörtök",
+  "Péntek",
+  "Szombat",
+  "Vasárnap",
+];
+
 const App = () => {
   const [wagons, setWagons] = useState(defaultWagons);
   const [schedule, setSchedule] = useState(createInitialSchedule());
@@ -22,15 +33,10 @@ const App = () => {
   function createInitialSchedule() {
     const initialSchedule = {};
     wagons.forEach((wagon) => {
-      initialSchedule[wagon] = {
-        Monday: { morning: "", afternoon: "" },
-        Tuesday: { morning: "", afternoon: "" },
-        Wednesday: { morning: "", afternoon: "" },
-        Thursday: { morning: "", afternoon: "" },
-        Friday: { morning: "", afternoon: "" },
-        Saturday: { morning: "", afternoon: "" },
-        Sunday: { morning: "", afternoon: "" },
-      };
+      initialSchedule[wagon] = {};
+      days.forEach((day) => {
+        initialSchedule[wagon][day] = { morning: "", afternoon: "" };
+      });
     });
     return initialSchedule;
   }
@@ -59,6 +65,15 @@ const App = () => {
     });
   };
 
+  const handleSortEmployees = () => {
+    const sortedSchedule = sortEmployeesIntoSchedule(
+      employeesList,
+      wagons,
+      schedule
+    );
+    setSchedule(sortedSchedule);
+  };
+
   useEffect(() => {
     setSchedule(createInitialSchedule());
   }, [wagons]);
@@ -71,12 +86,16 @@ const App = () => {
           onAddEmployee={handleAddEmployee}
           employeesList={employeesList}
           wagons={wagons}
+          days={days}
+          onSortEmployees={handleSortEmployees}
         />
         <ScheduleTable
           wagons={wagons}
+          days={days}
           schedule={schedule}
           employeesList={employeesList}
           onAssignEmployee={handleAssignEmployee}
+          onSortEmployees={handleSortEmployees}
         />
       </div>
     </div>

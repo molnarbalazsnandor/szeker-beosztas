@@ -1,16 +1,19 @@
 // AddEmployeeForm.jsx
 import React, { useState, useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Paper from "@mui/material/Paper";
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Box,
+} from "@mui/material";
 
-const AddEmployeeForm = ({ onAddEmployee, employeesList, wagons }) => {
+const AddEmployeeForm = ({ onAddEmployee, employeesList, wagons, days }) => {
   const [employee, setEmployee] = useState({
     name: "",
     shifts: 1,
@@ -119,12 +122,10 @@ const AddEmployeeForm = ({ onAddEmployee, employeesList, wagons }) => {
         <FormGroup>
           <List>
             <ListItem>
-              <ListItemText primary="Days" />
-              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                (day, index) => (
-                  <ListItemText key={`day-label-${index}`} primary={day} />
-                )
-              )}
+              <ListItemText />
+              {days.map((day, index) => (
+                <ListItemText key={`day-label-${index}`} primary={day} />
+              ))}
             </ListItem>
             <ListItem>
               <ListItemText primary="Morning Shift" />
@@ -157,18 +158,34 @@ const AddEmployeeForm = ({ onAddEmployee, employeesList, wagons }) => {
           </List>
         </FormGroup>
         <Button type="submit" variant="contained" color="primary">
-          Add
+          Hozzáad
         </Button>
       </form>
       {employeesList.length > 0 && (
-        <List style={{ marginTop: "20px" }}>
-          {employeesList.map((emp, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={emp.name} />
-            </ListItem>
-          ))}
-        </List>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <List style={{ marginTop: "20px" }}>
+            {employeesList.map((emp, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={emp.name} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
       )}
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        style={{ marginTop: "20px" }}
+      >
+        Beoszt
+      </Button>
     </Paper>
   );
 };

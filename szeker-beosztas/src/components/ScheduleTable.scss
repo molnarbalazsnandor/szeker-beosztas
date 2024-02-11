@@ -1,0 +1,25 @@
+.schedule-table {
+  width: 800vw;
+  margin: auto;
+
+  .schedule-cell {
+    border: 1px solid #ddd;
+    padding: 0px;
+    height: 6vh;
+    width: 10vw;
+    text-align: center;
+
+    .schedule-select {
+      width: 100%;
+    }
+  }
+
+}
+
+
+
+.notes-box {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid grey;
+}
