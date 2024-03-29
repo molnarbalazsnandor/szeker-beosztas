@@ -1,5 +1,5 @@
 // ScheduleTable.jsx
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -8,18 +8,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Box,
   Select,
   MenuItem,
+  Box,
 } from "@mui/material";
 import "./ScheduleTable.css";
 import { wagons, days } from "./scheduleUtils";
+import Notes from "./Notes";
 
 const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
-  useEffect(() => {
-    console.log("Schedule updated:", schedule);
-  }, [schedule]);
-
   const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
     onAssignEmployee(wagon, day, shiftType, employee);
   };
@@ -68,9 +65,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                           )
                         }
                       >
-                        <MenuItem value="" disabled>
-                          Select Employee
-                        </MenuItem>
+                        <MenuItem value="">{"(üres)"}</MenuItem>
                         {employeesList.map((employee) => (
                           <MenuItem key={employee.name} value={employee.name}>
                             {employee.name}
@@ -100,9 +95,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                           )
                         }
                       >
-                        <MenuItem value="" disabled>
-                          Select Employee
-                        </MenuItem>
+                        <MenuItem value="">{"(üres)"}</MenuItem>
                         {employeesList.map((employee) => (
                           <MenuItem key={employee.name} value={employee.name}>
                             {employee.name}
@@ -117,9 +110,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Box className="notes-box">
-        <h2>Notes</h2>
-      </Box>
+      <Notes schedule={schedule} employeesList={employeesList} />
     </div>
   );
 };

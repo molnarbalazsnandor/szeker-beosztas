@@ -39,30 +39,38 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
   employeesList.forEach((employee) => {
     const { name, shifts, wagonPreferences, shiftAvailability } = employee;
     let shiftsAssigned = 0;
+    const availableShifts = [];
 
-    // Loop through each shift type (morning, afternoon)
+    // Create an array of available shifts for the employee
     Object.keys(shiftAvailability).forEach((shiftType) => {
-      // Loop through the number of shifts requested by the employee
-      for (let i = 0; i < shifts; i++) {
-        // Find an available slot for the employee in the schedule
-        const slot = findAvailableSlot(
-          schedule,
-          wagonPreferences,
-          shiftAvailability,
-          shiftType
-        );
-
-        // If a slot is found and the employee hasn't reached the requested shifts limit, assign the employee to that slot
-        if (slot && shiftsAssigned < shifts) {
-          schedule[slot.wagon][slot.day][shiftType] = name;
-          shiftsAssigned++;
-        } else {
-          // If no slot is found or the employee has reached the requested shifts limit, break the loop
-          break;
+      shiftAvailability[shiftType].forEach((available, index) => {
+        if (available) {
+          availableShifts.push({ shiftType, index });
         }
+      });
+    });
+
+    // Shuffle the available shifts for the employee
+    shuffleArray(availableShifts);
+
+    // Assign shifts randomly to the employee
+    availableShifts.forEach(({ shiftType, index }) => {
+      // Find an available slot for the employee in the schedule
+      const slot = findAvailableSlot(
+        schedule,
+        wagonPreferences,
+        shiftAvailability,
+        shiftType
+      );
+
+      // If a slot is found and the employee hasn't reached the requested shifts limit, assign the employee to that slot
+      if (slot && shiftsAssigned < shifts) {
+        schedule[slot.wagon][slot.day][shiftType] = name;
+        shiftsAssigned++;
       }
     });
   });
+
   return schedule;
 };
 
