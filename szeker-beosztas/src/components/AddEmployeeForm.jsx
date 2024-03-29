@@ -12,8 +12,16 @@ import {
   Paper,
   Box,
 } from "@mui/material";
+import { wagons, days } from "./scheduleUtils";
 
-const AddEmployeeForm = ({ onAddEmployee, employeesList, wagons, days }) => {
+const AddEmployeeForm = ({
+  schedule,
+  setSchedule,
+  employeesList,
+  onAddEmployee,
+  onDeleteEmployee,
+  onSortEmployees,
+}) => {
   const [employee, setEmployee] = useState({
     name: "",
     shifts: 1,
@@ -158,32 +166,28 @@ const AddEmployeeForm = ({ onAddEmployee, employeesList, wagons, days }) => {
           </List>
         </FormGroup>
         <Button type="submit" variant="contained" color="primary">
-          Hozzáad
+          Mentés
         </Button>
       </form>
       {employeesList.length > 0 && (
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <List style={{ marginTop: "20px" }}>
+        <Box>
+          <List>
             {employeesList.map((emp, index) => (
               <ListItem key={index}>
                 <ListItemText primary={emp.name} />
+                <Button
+                  onClick={() => onDeleteEmployee(emp.name)}
+                  variant="contained"
+                  color="error"
+                >
+                  Delete
+                </Button>
               </ListItem>
             ))}
           </List>
         </Box>
       )}
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        style={{ marginTop: "20px" }}
-      >
+      <Button onClick={onSortEmployees} variant="contained" color="primary">
         Beoszt
       </Button>
     </Paper>

@@ -1,10 +1,44 @@
-// scheduleUtils.js
+const wagons = [
+  "Dávid",
+  "Bethlen",
+  "Téka",
+  "Csehov",
+  "Frodó",
+  "Zarándok",
+  "Abigél",
+  "Manfréd",
+];
+
+const days = [
+  "Hétfő",
+  "Kedd",
+  "Szerda",
+  "Csütörtök",
+  "Péntek",
+  "Szombat",
+  "Vasárnap",
+];
+
+const createInitialSchedule = () => {
+  const initialSchedule = {};
+  wagons.forEach((wagon) => {
+    initialSchedule[wagon] = {};
+    days.forEach((day) => {
+      initialSchedule[wagon][day] = { morning: "", afternoon: "" };
+    });
+  });
+  return initialSchedule;
+};
 
 // Function to sort employees into the schedule
 const sortEmployeesIntoSchedule = (schedule, employeesList) => {
-  // Loop through each employee in the list
+  // Shuffle the employees list to introduce randomness
+  shuffleArray(employeesList);
+
+  // Loop through each employee in the shuffled list
   employeesList.forEach((employee) => {
     const { name, shifts, wagonPreferences, shiftAvailability } = employee;
+    let shiftsAssigned = 0;
 
     // Loop through each shift type (morning, afternoon)
     Object.keys(shiftAvailability).forEach((shiftType) => {
@@ -18,18 +52,26 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
           shiftType
         );
 
-        // If a slot is found, assign the employee to that slot
-        if (slot) {
+        // If a slot is found and the employee hasn't reached the requested shifts limit, assign the employee to that slot
+        if (slot && shiftsAssigned < shifts) {
           schedule[slot.wagon][slot.day][shiftType] = name;
+          shiftsAssigned++;
         } else {
-          // If no slot is found, break the loop
+          // If no slot is found or the employee has reached the requested shifts limit, break the loop
           break;
         }
       }
     });
   });
-
   return schedule;
+};
+
+// Function to shuffle an array using Fisher-Yates algorithm (modern version)
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 };
 
 // Helper function to find an available slot in the schedule
@@ -67,15 +109,6 @@ const findAvailableSlot = (
 };
 
 // Helper function to get the index of a day in the week
-const getDayIndex = (day) =>
-  [
-    "Hétfő",
-    "Kedd",
-    "Szerda",
-    "Csütörtök",
-    "Péntek",
-    "Szombat",
-    "Vasárnap",
-  ].indexOf(day);
+const getDayIndex = (day) => days.indexOf(day);
 
-export { sortEmployeesIntoSchedule };
+export { sortEmployeesIntoSchedule, createInitialSchedule, wagons, days };

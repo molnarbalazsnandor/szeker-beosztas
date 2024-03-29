@@ -2,44 +2,14 @@
 import React, { useState, useEffect } from "react";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
-import { sortEmployeesIntoSchedule } from "./components/scheduleUtils";
-
-const defaultWagons = [
-  "Dávid",
-  "Bethlen",
-  "Téka",
-  "Csehov",
-  "Frodó",
-  "Zarándok",
-  "Abigél",
-  "Manfréd",
-];
-
-const days = [
-  "Hétfő",
-  "Kedd",
-  "Szerda",
-  "Csütörtök",
-  "Péntek",
-  "Szombat",
-  "Vasárnap",
-];
+import {
+  sortEmployeesIntoSchedule,
+  createInitialSchedule,
+} from "./components/scheduleUtils";
 
 const App = () => {
-  const [wagons, setWagons] = useState(defaultWagons);
   const [schedule, setSchedule] = useState(createInitialSchedule());
   const [employeesList, setEmployeesList] = useState([]);
-
-  function createInitialSchedule() {
-    const initialSchedule = {};
-    wagons.forEach((wagon) => {
-      initialSchedule[wagon] = {};
-      days.forEach((day) => {
-        initialSchedule[wagon][day] = { morning: "", afternoon: "" };
-      });
-    });
-    return initialSchedule;
-  }
 
   const handleAddEmployee = (employee) => {
     setEmployeesList([...employeesList, employee]);
@@ -60,42 +30,50 @@ const App = () => {
       // Update the employee for the specified shift
       newSchedule[wagon][day][shiftType] = employee;
 
-      console.log("Updated Schedule:", newSchedule); // Log the updated schedule
+      console.log("App.js Updated Schedule:", newSchedule); // Log the updated schedule
       return newSchedule;
     });
   };
 
   const handleSortEmployees = () => {
-    const sortedSchedule = sortEmployeesIntoSchedule(
-      employeesList,
-      wagons,
-      schedule
+    // Reset the schedule before sorting
+    const initialSchedule = createInitialSchedule();
+    setSchedule(initialSchedule);
+
+    // Sort employees into the updated schedule
+    const updatedSchedule = sortEmployeesIntoSchedule(
+      { ...initialSchedule },
+      employeesList
     );
-    setSchedule(sortedSchedule);
+
+    console.log("Sorted Schedule:", updatedSchedule);
+    // You may want to update the state or perform any other actions based on the sorted schedule
+    setSchedule(updatedSchedule); // Update the main schedule with the updated schedule
   };
 
-  useEffect(() => {
-    setSchedule(createInitialSchedule());
-  }, [wagons]);
+  // Function to delete an employee
+  const handleDeleteEmployee = (employeeName) => {
+    const updatedList = employeesList.filter(
+      (employee) => employee.name !== employeeName
+    );
+    setEmployeesList(updatedList);
+  };
 
   return (
     <div>
-      <h1>Workplace Schedule Maker</h1>
+      <h1>Könyvmentők beosztás</h1>
       <div style={{ display: "flex" }}>
         <AddEmployeeForm
-          onAddEmployee={handleAddEmployee}
+          schedule={schedule}
           employeesList={employeesList}
-          wagons={wagons}
-          days={days}
+          onAddEmployee={handleAddEmployee}
+          onDeleteEmployee={handleDeleteEmployee}
           onSortEmployees={handleSortEmployees}
         />
         <ScheduleTable
-          wagons={wagons}
-          days={days}
           schedule={schedule}
           employeesList={employeesList}
           onAssignEmployee={handleAssignEmployee}
-          onSortEmployees={handleSortEmployees}
         />
       </div>
     </div>

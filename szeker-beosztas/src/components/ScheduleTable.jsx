@@ -1,5 +1,5 @@
 // ScheduleTable.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -11,36 +11,17 @@ import {
   Box,
   Select,
   MenuItem,
-  Button,
 } from "@mui/material";
 import "./ScheduleTable.css";
-import { sortEmployeesIntoSchedule } from "./scheduleUtils";
+import { wagons, days } from "./scheduleUtils";
 
-const ScheduleTable = ({
-  wagons,
-  days,
-  schedule,
-  employeesList,
-  onAssignEmployee,
-}) => {
-  const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
-    onAssignEmployee(wagon, day, shiftType, employee);
-  };
-
-  const [sortedSchedule, setSortedSchedule] = useState(schedule);
-
+const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
   useEffect(() => {
-    setSortedSchedule(schedule);
+    console.log("Schedule updated:", schedule);
   }, [schedule]);
 
-  const handleSortEmployees = () => {
-    const updatedSchedule = sortEmployeesIntoSchedule(
-      { ...schedule },
-      employeesList
-    );
-    setSortedSchedule(updatedSchedule);
-    console.log("Sorted Schedule:", sortedSchedule);
-    // You may want to update the state or perform any other actions based on the sorted schedule
+  const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
+    onAssignEmployee(wagon, day, shiftType, employee);
   };
 
   return (
@@ -77,7 +58,7 @@ const ScheduleTable = ({
                       <Select
                         className="schedule-select"
                         labelId={`${wagon}-${day}-morning-label`}
-                        value={sortedSchedule[wagon]?.[day]?.morning || ""}
+                        value={schedule[wagon]?.[day]?.morning || ""}
                         onChange={(e) =>
                           handleAssignEmployeeToCell(
                             wagon,
@@ -109,7 +90,7 @@ const ScheduleTable = ({
                       <Select
                         className="schedule-select"
                         labelId={`${wagon}-${day}-afternoon-label`}
-                        value={sortedSchedule[wagon]?.[day]?.afternoon || ""}
+                        value={schedule[wagon]?.[day]?.afternoon || ""}
                         onChange={(e) =>
                           handleAssignEmployeeToCell(
                             wagon,
@@ -138,13 +119,6 @@ const ScheduleTable = ({
       </TableContainer>
       <Box className="notes-box">
         <h2>Notes</h2>
-        <Button
-          onClick={handleSortEmployees}
-          variant="contained"
-          color="primary"
-        >
-          Beoszt
-        </Button>
       </Box>
     </div>
   );
