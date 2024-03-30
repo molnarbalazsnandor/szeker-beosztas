@@ -1,7 +1,9 @@
 // App.js
 import React, { useState, useEffect } from "react";
+import { Box, Typography } from "@mui/material";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
+import Notes from "./components/Notes";
 import {
   sortEmployeesIntoSchedule,
   createInitialSchedule,
@@ -60,9 +62,9 @@ const App = () => {
   };
 
   return (
-    <div>
-      <h1>Könyvmentők beosztás</h1>
-      <div style={{ display: "flex" }}>
+    <Box>
+      <Typography variant="h3">Könyvmentők beosztás</Typography>
+      <Box style={{ display: "flex", flexDirection: "row" }}>
         <AddEmployeeForm
           schedule={schedule}
           employeesList={employeesList}
@@ -70,13 +72,16 @@ const App = () => {
           onDeleteEmployee={handleDeleteEmployee}
           onSortEmployees={handleSortEmployees}
         />
-        <ScheduleTable
-          schedule={schedule}
-          employeesList={employeesList}
-          onAssignEmployee={handleAssignEmployee}
-        />
-      </div>
-    </div>
+        <Box style={{ display: "flex", flexDirection: "column" }}>
+          <ScheduleTable
+            schedule={schedule}
+            employeesList={employeesList}
+            onAssignEmployee={handleAssignEmployee}
+          />
+          <Notes schedule={schedule} employeesList={employeesList} />
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

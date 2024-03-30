@@ -1,5 +1,4 @@
-// ScheduleTable.jsx
-import React from "react";
+import React, { useRef } from "react";
 import {
   Table,
   TableBody,
@@ -11,30 +10,60 @@ import {
   Select,
   MenuItem,
   Box,
+  Button,
 } from "@mui/material";
 import "./ScheduleTable.css";
 import { wagons, days } from "./scheduleUtils";
-import Notes from "./Notes";
+import html2canvas from "html2canvas";
 
 const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
+  const tableRef = useRef(null);
+
+  const handlePrint = () => {
+    if (tableRef.current) {
+      html2canvas(tableRef.current).then((canvas) => {
+        const imgData = canvas.toDataURL("image/jpeg");
+        const link = document.createElement("a");
+        link.href = imgData;
+        link.download = "könyvmentők beosztás.jpg";
+        link.click();
+      });
+    }
+  };
+
+  // Function to get the days of the next week
+  const dates = getDatesOfWeek();
+  function getDatesOfWeek() {
+    const dates = [];
+    const today = new Date();
+    for (let i = 1; i <= 7; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() + i);
+      const options = { day: "2-digit", month: "2-digit" };
+      dates.push(new Intl.DateTimeFormat("hu-HU", options).format(date));
+    }
+    return dates;
+  }
+
   const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
     onAssignEmployee(wagon, day, shiftType, employee);
   };
 
   return (
-    <div className="schedule-table">
+    <Box className="schedule-table" style={{ width: "100%" }}>
       <TableContainer component={Paper}>
         <Table
           className="schedule-table"
           style={{ borderCollapse: "collapse" }}
+          ref={tableRef}
         >
           <TableHead>
             <TableRow>
               <TableCell className="schedule-cell">Szekér</TableCell>
               <TableCell className="schedule-cell">Műszak</TableCell>
-              {days.map((day) => (
+              {days.map((day, index) => (
                 <TableCell key={day} className="schedule-cell">
-                  {day}
+                  {`${day} ${dates[index]}`}
                 </TableCell>
               ))}
             </TableRow>
@@ -110,8 +139,10 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Notes schedule={schedule} employeesList={employeesList} />
-    </div>
+      <Button variant="contained" onClick={handlePrint}>
+        Print as JPG
+      </Button>
+    </Box>
   );
 };
 
