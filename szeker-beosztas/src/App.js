@@ -8,10 +8,11 @@ import {
   sortEmployeesIntoSchedule,
   createInitialSchedule,
 } from "./components/scheduleUtils";
+import testEmployeesList from "./components/testEmployeesList";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
-  const [employeesList, setEmployeesList] = useState([]);
+  const [employeesList, setEmployeesList] = useState(testEmployeesList);
 
   const handleAddEmployee = (employee) => {
     setEmployeesList([...employeesList, employee]);

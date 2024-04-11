@@ -1,5 +1,5 @@
 .schedule-table {
-  width: 800vw;
+  width: 100%;
   margin: auto;
 }
 .schedule-table .schedule-cell {
@@ -12,8 +12,10 @@
 .schedule-table .schedule-cell .schedule-select {
   width: 100%;
 }
-
-.notes-box {
+.schedule-table .morning {
+  background-color: #dedddd;
+}
+.schedule-table .notes-box {
   margin-top: 20px;
   padding: 20px;
   border: 1px solid grey;

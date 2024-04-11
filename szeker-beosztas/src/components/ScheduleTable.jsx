@@ -19,31 +19,40 @@ import html2canvas from "html2canvas";
 const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
   const tableRef = useRef(null);
 
+  // Function to get the days of the next week
+  const dates = getDatesOfWeek();
+  function getDatesOfWeek() {
+    const dates = [];
+    const today = new Date();
+
+    // Calculate the next Monday
+    const nextMonday = new Date(today);
+    nextMonday.setDate(
+      nextMonday.getDate() + ((1 + 7 - nextMonday.getDay()) % 7 || 7)
+    );
+
+    // Push the dates for each day of next week into the dates array
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(nextMonday);
+      date.setDate(date.getDate() + i);
+      const options = { day: "2-digit", month: "2-digit" };
+      dates.push(new Intl.DateTimeFormat("hu-HU", options).format(date));
+    }
+
+    return dates;
+  }
+
   const handlePrint = () => {
     if (tableRef.current) {
       html2canvas(tableRef.current).then((canvas) => {
         const imgData = canvas.toDataURL("image/jpeg");
         const link = document.createElement("a");
         link.href = imgData;
-        link.download = "könyvmentők beosztás.jpg";
+        link.download = `${dates[0]} - ${dates[1]} könyvmentők beosztás.jpg`;
         link.click();
       });
     }
   };
-
-  // Function to get the days of the next week
-  const dates = getDatesOfWeek();
-  function getDatesOfWeek() {
-    const dates = [];
-    const today = new Date();
-    for (let i = 1; i <= 7; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() + i);
-      const options = { day: "2-digit", month: "2-digit" };
-      dates.push(new Intl.DateTimeFormat("hu-HU", options).format(date));
-    }
-    return dates;
-  }
 
   const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
     onAssignEmployee(wagon, day, shiftType, employee);
@@ -75,11 +84,11 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                   <TableCell rowSpan={2} className="cell">
                     {wagon}
                   </TableCell>
-                  <TableCell className="cell">D.előtt</TableCell>
+                  <TableCell className="cell morning">D.előtt</TableCell>
                   {days.map((day) => (
                     <TableCell
                       key={`${wagon}-${day}-morning`}
-                      className="schedule-cell"
+                      className={`schedule-cell ${day} morning`}
                     >
                       <Select
                         className="schedule-select"
@@ -105,11 +114,13 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                   ))}
                 </TableRow>
                 <TableRow>
-                  <TableCell className="schedule-cell">D.után</TableCell>
+                  <TableCell className="schedule-cell afternoon">
+                    D.után
+                  </TableCell>
                   {days.map((day) => (
                     <TableCell
                       key={`${wagon}-${day}-afternoon`}
-                      className="schedule-cell"
+                      className={`schedule-cell ${day} afternoon`}
                     >
                       <Select
                         className="schedule-select"
