@@ -59,20 +59,32 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
   };
 
   return (
-    <Box className="schedule-table" style={{ width: "100%" }}>
+    <Box className="schedule-table">
       <TableContainer component={Paper}>
         <Table
           className="schedule-table"
           style={{ borderCollapse: "collapse" }}
           ref={tableRef}
         >
-          <TableHead>
-            <TableRow>
+          <colgroup>
+            {Array.from({ length: 9 }).map((_, index) => (
+              <col
+                key={index}
+                style={{
+                  backgroundColor:
+                    index % 2 === 1 ? "" : `rgba(180, 40, 40, 0.${9 - index})`,
+                }}
+              />
+            ))}
+          </colgroup>
+          <TableHead className="table-head">
+            <TableRow className="table-row">
               <TableCell className="schedule-cell">Szekér</TableCell>
               <TableCell className="schedule-cell">Műszak</TableCell>
               {days.map((day, index) => (
                 <TableCell key={day} className="schedule-cell">
-                  {`${day} ${dates[index]}`}
+                  <Box>{day}</Box>
+                  <Box>{dates[index]}</Box>
                 </TableCell>
               ))}
             </TableRow>
@@ -84,7 +96,9 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                   <TableCell rowSpan={2} className="cell">
                     {wagon}
                   </TableCell>
-                  <TableCell className="cell morning">D.előtt</TableCell>
+                  <TableCell className="schedule-cell morning">
+                    D.előtt
+                  </TableCell>
                   {days.map((day) => (
                     <TableCell
                       key={`${wagon}-${day}-morning`}

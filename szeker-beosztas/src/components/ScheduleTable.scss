@@ -1,12 +1,23 @@
+.table-head {
+
+
+
+  .table-row {
+    background-color: rgba(83, 53, 53, 0.5);
+  }
+}
+
 .schedule-table {
   width: 100%;
   margin: auto;
+
 
   .schedule-cell {
     border: 1px solid #ddd;
     padding: 0px;
     height: 6vh;
     width: 10vw;
+
     text-align: center;
 
     .schedule-select {
@@ -14,9 +25,10 @@
     }
   }
 
-  .morning {
-    background-color: #dedddd;
+  .afternoon {
+    background-color: rgba(93, 91, 91, 0.4);
   }
+
 
   .notes-box {
     margin-top: 20px;

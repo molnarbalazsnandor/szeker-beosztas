@@ -24,6 +24,12 @@
   color: white;
 }
 
+.app-body{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
 .App-link {
   color: #61dafb;
 }

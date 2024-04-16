@@ -9,6 +9,7 @@ import {
   createInitialSchedule,
 } from "./components/scheduleUtils";
 import testEmployeesList from "./components/testEmployeesList";
+import "./App.css";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
@@ -65,7 +66,7 @@ const App = () => {
   return (
     <Box>
       <Typography variant="h3">Könyvmentők beosztás</Typography>
-      <Box style={{ display: "flex", flexDirection: "row" }}>
+      <Box className="app-body">
         <AddEmployeeForm
           schedule={schedule}
           employeesList={employeesList}

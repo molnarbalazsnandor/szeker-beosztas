@@ -7,6 +7,8 @@ const wagons = [
   "Zarándok",
   "Abigél",
   "Manfréd",
+  "Désiré",
+  "Nyugati",
 ];
 
 const days = [
