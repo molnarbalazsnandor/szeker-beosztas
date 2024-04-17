@@ -1,15 +1,13 @@
 .table-head {
-
-
-
   .table-row {
     background-color: rgba(83, 53, 53, 0.5);
   }
 }
 
 .schedule-table {
-  width: 100%;
   margin: auto;
+  display: flex;
+  flex-direction: row;
 
 
   .schedule-cell {
@@ -29,10 +27,4 @@
     background-color: rgba(93, 91, 91, 0.4);
   }
 
-
-  .notes-box {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid grey;
-  }
 }

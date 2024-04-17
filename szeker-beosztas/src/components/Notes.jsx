@@ -1,9 +1,9 @@
 // Notes.jsx
 import React, { useEffect, useState } from "react";
-import { Paper, Box } from "@mui/material";
+import { Paper, Box, Button } from "@mui/material";
 import { wagons, days } from "./scheduleUtils";
 
-const Notes = ({ schedule, employeesList }) => {
+const Notes = ({ schedule, employeesList, handlePrint }) => {
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const Notes = ({ schedule, employeesList }) => {
       const assignedShifts = calculateAssignedShifts(employee);
       if (assignedShifts !== shifts) {
         newNotes.push(
-          `${name}: requested ${shifts} shifts, but got ${assignedShifts}!`
+          `${name} ${shifts} műszakot kért, de ${assignedShifts}-t kapott!`
         );
       }
       const requestedWagons = wagonPreferences.join(", ");
@@ -27,15 +27,17 @@ const Notes = ({ schedule, employeesList }) => {
       );
       if (problematicWagons.length > 0) {
         newNotes.push(
-          `${name} got assigned to ${problematicWagons.join(
+          `${name} be lett osztva a  ${problematicWagons.join(
             ", "
-          )}, but only requested shifts on ${requestedWagons}!`
+          )} szekérre, pedig csak ezekre kért műszakot: ${requestedWagons}!`
         );
       }
       const unavailableShifts = findUnavailableShifts(employee);
       unavailableShifts.forEach((shift) => {
         newNotes.push(
-          `${name} is not available on ${shift.day} ${shift.shift}!`
+          `${name} nem ér rá ekkor: ${shift.day} ${
+            shift.shift === "morning" ? "délelőtt" : "délután"
+          }!`
         );
       });
       const duplicateShifts = findDuplicateShifts(employee);
@@ -127,7 +129,7 @@ const Notes = ({ schedule, employeesList }) => {
 
     // Generate notes for duplicate shifts
     const notes = duplicateShifts.map(({ day, wagons }) => {
-      return `${employee.name} is assigned to multiple wagons (${wagons}) on ${day}!`;
+      return `${employee.name} több szekérre is be lett osztva (${wagons}) ezen a napon: ${day}!`;
     });
 
     return notes;
@@ -138,8 +140,17 @@ const Notes = ({ schedule, employeesList }) => {
   };
 
   return (
-    <Paper className="notes-box">
-      <h2>Notes</h2>
+    <Paper
+      className="notes-box"
+      style={{
+        padding: "20px",
+        minWidth: "25%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <h2>Megjegyzések</h2>
       <Box>
         <ul>
           {notes.map((note, index) => (
@@ -147,6 +158,18 @@ const Notes = ({ schedule, employeesList }) => {
           ))}
         </ul>
       </Box>
+      <Button
+        variant="contained"
+        onClick={handlePrint}
+        style={{
+          backgroundColor: "rgba(180, 40, 40, 0.9)",
+          width: "80%",
+          height: "100px",
+          fontSize: "20px",
+        }}
+      >
+        Beosztás lementése
+      </Button>
     </Paper>
   );
 };

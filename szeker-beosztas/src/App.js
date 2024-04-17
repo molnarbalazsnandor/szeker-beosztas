@@ -3,13 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
-import Notes from "./components/Notes";
 import {
   sortEmployeesIntoSchedule,
   createInitialSchedule,
 } from "./components/scheduleUtils";
 import testEmployeesList from "./components/testEmployeesList";
 import "./App.css";
+import { padding } from "@mui/system";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
@@ -65,7 +65,15 @@ const App = () => {
 
   return (
     <Box>
-      <Typography variant="h3">Könyvmentők beosztás</Typography>
+      <Box className="app-header">
+        <Box
+          component="img"
+          src="./../konyvmentok.jpg"
+          alt="konyvmentok ikon"
+          sx={{ width: 100, height: "auto" }}
+        />
+        <Typography variant="h3">Beosztás generátor</Typography>
+      </Box>
       <Box className="app-body">
         <AddEmployeeForm
           schedule={schedule}
@@ -74,13 +82,19 @@ const App = () => {
           onDeleteEmployee={handleDeleteEmployee}
           onSortEmployees={handleSortEmployees}
         />
-        <Box style={{ display: "flex", flexDirection: "column" }}>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "95%",
+            paddingTop: "20px",
+          }}
+        >
           <ScheduleTable
             schedule={schedule}
             employeesList={employeesList}
             onAssignEmployee={handleAssignEmployee}
           />
-          <Notes schedule={schedule} employeesList={employeesList} />
         </Box>
       </Box>
     </Box>

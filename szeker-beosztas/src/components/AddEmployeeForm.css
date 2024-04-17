@@ -1,0 +1,53 @@
+.employee-form-paper {
+  width: 95%;
+  height: auto;
+  padding: 20px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.employee-form-paper .employee-form {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.employee-form-paper .employee-form .employee-name-shifts-wagons {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 10px;
+}
+.employee-form-paper .employee-form .employee-days-save {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+}
+.employee-form-paper .employee-list-assign {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 10px;
+}
+.employee-form-paper .employee-list-assign .employee-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.employee-form-paper .employee-list-assign .employee-list .employee-list-item {
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  padding: 3px;
+}
+.employee-form-paper .employee-button {
+  margin-top: 5px;
+  width: 30%;
+  height: 40px;
+  align-self: center;
+}/*# sourceMappingURL=AddEmployeeForm.css.map */

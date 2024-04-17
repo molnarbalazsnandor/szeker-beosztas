@@ -1,7 +1,14 @@
 // AddEmployeeForm.jsx
 import React, { useState, useEffect } from "react";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
+  Typography,
   Button,
   Checkbox,
   FormGroup,
@@ -13,6 +20,7 @@ import {
   Box,
 } from "@mui/material";
 import { wagons, days } from "./scheduleUtils";
+import "./AddEmployeeForm.css";
 
 const AddEmployeeForm = ({
   schedule,
@@ -91,105 +99,160 @@ const AddEmployeeForm = ({
   };
 
   return (
-    <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Employee Name"
-          variant="outlined"
-          fullWidth
-          value={employee.name}
-          onChange={handleInputChange}
-          style={{ marginBottom: "10px" }}
-        />
-        <TextField
-          label="Number of Shifts"
-          variant="outlined"
-          type="number"
-          fullWidth
-          value={employee.shifts}
-          onChange={handleShiftsChange}
-          style={{ marginBottom: "10px" }}
-        />
-        <FormGroup>
-          <List>
-            {wagons.map((wagon) => (
-              <ListItem key={wagon}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={employee.wagonPreferences.includes(wagon)}
-                      onChange={() => handleWagonPreferenceChange(wagon)}
+    <Paper className="employee-form-paper" elevation={5}>
+      <Paper className="employee-form">
+        <form className="employee-form" onSubmit={handleSubmit}>
+          <Box className="employee-name-shifts-wagons">
+            <TextField
+              label="Könyvterjesztő neve"
+              variant="outlined"
+              fullWidth
+              value={employee.name}
+              onChange={handleInputChange}
+              style={{ marginBottom: "10px" }}
+            />
+            <TextField
+              label="Igényelt műszakok száma"
+              variant="outlined"
+              type="number"
+              fullWidth
+              value={employee.shifts}
+              onChange={handleShiftsChange}
+              style={{ marginBottom: "10px" }}
+            />
+            <Typography variant="h6" gutterBottom>
+              Preferált szekerek:
+            </Typography>
+            <FormGroup>
+              <List style={{ columnCount: 2 }}>
+                {wagons.map((wagon) => (
+                  <ListItem key={wagon}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={employee.wagonPreferences.includes(wagon)}
+                          onChange={() => handleWagonPreferenceChange(wagon)}
+                        />
+                      }
+                      label={wagon}
                     />
-                  }
-                  label={wagon}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </FormGroup>
-        <FormGroup>
-          <List>
-            <ListItem>
-              <ListItemText />
-              {days.map((day, index) => (
-                <ListItemText key={`day-label-${index}`} primary={day} />
+                  </ListItem>
+                ))}
+              </List>
+            </FormGroup>
+          </Box>
+          <Box className="employee-days-save">
+            <Typography variant="h6" gutterBottom>
+              Mikor érne rá:
+            </Typography>
+            <FormGroup style={{ width: "100%" }}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center" />
+                      {days.map((day, index) => (
+                        <TableCell key={`day-header-${index}`} align="center">
+                          {day}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        D.előtt
+                      </TableCell>
+                      {Array(7)
+                        .fill()
+                        .map((_, index) => (
+                          <TableCell
+                            key={`morning-shift-${index}`}
+                            align="center"
+                          >
+                            <Checkbox
+                              checked={
+                                employee.shiftAvailability.morning[index]
+                              }
+                              onChange={() =>
+                                handleShiftAvailabilityChange("morning", index)
+                              }
+                            />
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        D.után
+                      </TableCell>
+                      {Array(7)
+                        .fill()
+                        .map((_, index) => (
+                          <TableCell
+                            key={`afternoon-shift-${index}`}
+                            align="center"
+                          >
+                            <Checkbox
+                              checked={
+                                employee.shiftAvailability.afternoon[index]
+                              }
+                              onChange={() =>
+                                handleShiftAvailabilityChange(
+                                  "afternoon",
+                                  index
+                                )
+                              }
+                            />
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </FormGroup>
+
+            <Button
+              className="employee-button"
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
+              Mentés
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+      <Paper className="employee-list-assign">
+        {employeesList.length > 0 && (
+          <Box>
+            <List className="employee-list">
+              {employeesList.map((emp, index) => (
+                <ListItem className="employee-list-item" key={index}>
+                  <Paper className="employee-list-item">
+                    <ListItemText primary={emp.name} />
+                    <Button
+                      onClick={() => onDeleteEmployee(emp.name)}
+                      variant="contained"
+                      color="error"
+                      style={{ marginLeft: "5px" }}
+                    >
+                      Delete
+                    </Button>
+                  </Paper>
+                </ListItem>
               ))}
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Morning Shift" />
-              {Array(7)
-                .fill()
-                .map((_, index) => (
-                  <Checkbox
-                    key={`morning-shift-${index}`}
-                    checked={employee.shiftAvailability.morning[index]}
-                    onChange={() =>
-                      handleShiftAvailabilityChange("morning", index)
-                    }
-                  />
-                ))}
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Afternoon Shift" />
-              {Array(7)
-                .fill()
-                .map((_, index) => (
-                  <Checkbox
-                    key={`afternoon-shift-${index}`}
-                    checked={employee.shiftAvailability.afternoon[index]}
-                    onChange={() =>
-                      handleShiftAvailabilityChange("afternoon", index)
-                    }
-                  />
-                ))}
-            </ListItem>
-          </List>
-        </FormGroup>
-        <Button type="submit" variant="contained" color="primary">
-          Mentés
+            </List>
+          </Box>
+        )}
+        <Button
+          onClick={onSortEmployees}
+          variant="contained"
+          color="primary"
+          className="employee-button"
+        >
+          Beoszt
         </Button>
-      </form>
-      {employeesList.length > 0 && (
-        <Box>
-          <List>
-            {employeesList.map((emp, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={emp.name} />
-                <Button
-                  onClick={() => onDeleteEmployee(emp.name)}
-                  variant="contained"
-                  color="error"
-                >
-                  Delete
-                </Button>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      )}
-      <Button onClick={onSortEmployees} variant="contained" color="primary">
-        Beoszt
-      </Button>
+      </Paper>
     </Paper>
   );
 };

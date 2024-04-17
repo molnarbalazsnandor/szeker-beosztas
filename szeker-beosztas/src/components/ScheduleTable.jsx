@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import "./ScheduleTable.css";
 import { wagons, days } from "./scheduleUtils";
+import Notes from "./Notes";
 import html2canvas from "html2canvas";
 
 const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
@@ -48,7 +49,9 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
         const imgData = canvas.toDataURL("image/jpeg");
         const link = document.createElement("a");
         link.href = imgData;
-        link.download = `${dates[0]} - ${dates[1]} könyvmentők beosztás.jpg`;
+        link.download = `${dates[0]} - ${
+          dates[dates.length - 1]
+        } könyvmentők beosztás.jpg`;
         link.click();
       });
     }
@@ -164,9 +167,11 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button variant="contained" onClick={handlePrint}>
-        Print as JPG
-      </Button>
+      <Notes
+        schedule={schedule}
+        employeesList={employeesList}
+        handlePrint={handlePrint}
+      />
     </Box>
   );
 };
