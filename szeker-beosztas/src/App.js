@@ -1,6 +1,6 @@
 // App.js
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, createTheme, ThemeProvider } from "@mui/material";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
 import {
@@ -14,6 +14,17 @@ import { padding } from "@mui/system";
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
   const [employeesList, setEmployeesList] = useState(testEmployeesList);
+
+  let theme = createTheme({
+    palette: {
+      primary: {
+        main: "rgba(101, 17, 17, 0.9)",
+      },
+      secondary: {
+        main: "#edf2ff",
+      },
+    },
+  });
 
   const handleAddEmployee = (employee) => {
     setEmployeesList([...employeesList, employee]);
@@ -65,38 +76,40 @@ const App = () => {
 
   return (
     <Box>
-      <Box className="app-header">
-        <Box
-          component="img"
-          src="./../konyvmentok.jpg"
-          alt="konyvmentok ikon"
-          sx={{ width: 100, height: "auto" }}
-        />
-        <Typography variant="h3">Beosztás generátor</Typography>
-      </Box>
-      <Box className="app-body">
-        <AddEmployeeForm
-          schedule={schedule}
-          employeesList={employeesList}
-          onAddEmployee={handleAddEmployee}
-          onDeleteEmployee={handleDeleteEmployee}
-          onSortEmployees={handleSortEmployees}
-        />
-        <Box
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "95%",
-            paddingTop: "20px",
-          }}
-        >
-          <ScheduleTable
+      <ThemeProvider theme={theme}>
+        <Box className="app-header">
+          <Box
+            component="img"
+            src="./../konyvmentok.jpg"
+            alt="konyvmentok ikon"
+            sx={{ width: 100, height: "auto" }}
+          />
+          <Typography variant="h3">Beosztás generátor</Typography>
+        </Box>
+        <Box className="app-body">
+          <AddEmployeeForm
             schedule={schedule}
             employeesList={employeesList}
-            onAssignEmployee={handleAssignEmployee}
+            onAddEmployee={handleAddEmployee}
+            onDeleteEmployee={handleDeleteEmployee}
+            onSortEmployees={handleSortEmployees}
           />
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "95%",
+              paddingTop: "20px",
+            }}
+          >
+            <ScheduleTable
+              schedule={schedule}
+              employeesList={employeesList}
+              onAssignEmployee={handleAssignEmployee}
+            />
+          </Box>
         </Box>
-      </Box>
+      </ThemeProvider>
     </Box>
   );
 };

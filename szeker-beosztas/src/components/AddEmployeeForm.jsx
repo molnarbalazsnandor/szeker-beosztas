@@ -109,7 +109,9 @@ const AddEmployeeForm = ({
               fullWidth
               value={employee.name}
               onChange={handleInputChange}
-              style={{ marginBottom: "10px" }}
+              style={{
+                marginBottom: "10px",
+              }}
             />
             <TextField
               label="Igényelt műszakok száma"

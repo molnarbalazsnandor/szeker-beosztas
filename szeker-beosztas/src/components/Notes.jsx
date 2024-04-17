@@ -162,7 +162,7 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
         variant="contained"
         onClick={handlePrint}
         style={{
-          backgroundColor: "rgba(180, 40, 40, 0.9)",
+          backgroundColor: "rgba(189, 4, 4, 0.9)",
           width: "80%",
           height: "100px",
           fontSize: "20px",
