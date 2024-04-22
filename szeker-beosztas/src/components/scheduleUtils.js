@@ -37,11 +37,19 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
   // Shuffle the employees list to introduce randomness
   shuffleArray(employeesList);
 
+  // Track employee assignments to prevent double booking on different wagons the same day
+  const employeeAssignments = {};
+
   // Loop through each employee in the shuffled list
   employeesList.forEach((employee) => {
     const { name, shifts, wagonPreferences, shiftAvailability } = employee;
     let shiftsAssigned = 0;
     const availableShifts = [];
+
+    // Initialize tracking for this employee
+    days.forEach((day) => {
+      employeeAssignments[day] = [];
+    });
 
     // Create an array of available shifts for the employee
     Object.keys(shiftAvailability).forEach((shiftType) => {
@@ -62,12 +70,15 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
         schedule,
         wagonPreferences,
         shiftAvailability,
-        shiftType
+        shiftType,
+        name,
+        employeeAssignments
       );
 
       // If a slot is found and the employee hasn't reached the requested shifts limit, assign the employee to that slot
       if (slot && shiftsAssigned < shifts) {
         schedule[slot.wagon][slot.day][shiftType] = name;
+        employeeAssignments[slot.day].push(name);
         shiftsAssigned++;
       }
     });
@@ -75,7 +86,6 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
 
   return schedule;
 };
-
 // Function to shuffle an array using Fisher-Yates algorithm (modern version)
 const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -84,23 +94,32 @@ const shuffleArray = (array) => {
   }
 };
 
-// Helper function to find an available slot in the schedule
 const findAvailableSlot = (
   schedule,
   wagonPreferences,
   shiftAvailability,
-  shiftType
+  shiftType,
+  employeeName,
+  employeeAssignments
 ) => {
   const availableSlots = [];
 
   // Loop through each day
   Object.keys(schedule[wagonPreferences[0]]).forEach((day) => {
+    // Check if the employee is already booked on this day on a different wagon
+    if (
+      employeeAssignments[day] &&
+      employeeAssignments[day].includes(employeeName)
+    ) {
+      return; // Skip to the next day if already booked elsewhere
+    }
+
     // Check if the employee is available for the shift on that day
     if (shiftAvailability[shiftType][getDayIndex(day)]) {
       for (let i = 0; i < wagonPreferences.length; i++) {
         const wagon = wagonPreferences[i];
 
-        // Check if the wagon, day, and shift type are initialized in the schedule
+        // Check if the wagon, day, and shift type are initialized in the schedule and empty
         if (
           schedule[wagon] &&
           schedule[wagon][day] &&

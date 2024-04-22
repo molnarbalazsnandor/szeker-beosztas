@@ -10,7 +10,6 @@ import {
   Select,
   MenuItem,
   Box,
-  Button,
 } from "@mui/material";
 import "./ScheduleTable.css";
 import { wagons, days } from "./scheduleUtils";
@@ -61,6 +60,28 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
     onAssignEmployee(wagon, day, shiftType, employee);
   };
 
+  const compareHungarianStrings = (a, b) => {
+    return a.localeCompare(b, "hu");
+  };
+
+  const isAvailable = (employee, dayIndex, shiftType) => {
+    return employee.shiftAvailability[shiftType][dayIndex];
+  };
+
+  const prefersWagon = (employee, wagon) => {
+    return employee.wagonPreferences.includes(wagon);
+  };
+
+  const getColorForEmployee = (employee, wagon, dayIndex, shiftType) => {
+    if (!isAvailable(employee, dayIndex, shiftType)) {
+      return "red";
+    }
+    if (prefersWagon(employee, wagon)) {
+      return "green";
+    }
+    return "black";
+  };
+
   return (
     <Box className="schedule-table">
       <TableContainer component={Paper}>
@@ -70,12 +91,14 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
           ref={tableRef}
         >
           <colgroup>
-            {Array.from({ length: 9 }).map((_, index) => (
+            <col style={{ backgroundColor: "rgba(180, 40, 40, 1)" }} />
+            <col style={{ backgroundColor: "rgba(83, 53, 53, 0.5)" }} />
+            {Array.from({ length: 7 }).map((_, index) => (
               <col
                 key={index}
                 style={{
                   backgroundColor:
-                    index % 2 === 1 ? "" : `rgba(180, 40, 40, 0.${9 - index})`,
+                    index % 2 === 1 ? "" : `rgba(180, 40, 40, 0.${7 - index})`,
                 }}
               />
             ))}
@@ -92,78 +115,68 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {wagons.map((wagon) => (
-              <React.Fragment key={wagon}>
-                <TableRow>
-                  <TableCell rowSpan={2} className="cell">
-                    {wagon}
-                  </TableCell>
-                  <TableCell className="schedule-cell morning">
-                    D.előtt
-                  </TableCell>
-                  {days.map((day) => (
+          <TableBody className="table-body">
+            {wagons.map((wagon) =>
+              ["morning", "afternoon"].map((shiftType) => (
+                <TableRow key={`${wagon}-${shiftType}`} className="table-row">
+                  {shiftType === "morning" && (
                     <TableCell
-                      key={`${wagon}-${day}-morning`}
-                      className={`schedule-cell ${day} morning`}
+                      rowSpan={2}
+                      className={`schedule-cell wagon ${wagon}`}
+                    >
+                      {wagon}
+                    </TableCell>
+                  )}
+                  <TableCell
+                    className={`schedule-cell shifts-column ${shiftType}`}
+                  >
+                    {shiftType === "morning" ? "D.előtt" : "D.után"}
+                  </TableCell>
+                  {days.map((day, index) => (
+                    <TableCell
+                      key={`${wagon}-${day}-${shiftType}`}
+                      className={`schedule-cell ${day} ${shiftType}`}
                     >
                       <Select
-                        className="schedule-select"
-                        labelId={`${wagon}-${day}-morning-label`}
-                        value={schedule[wagon]?.[day]?.morning || ""}
+                        value={schedule[wagon]?.[day]?.[shiftType] || ""}
                         onChange={(e) =>
-                          handleAssignEmployeeToCell(
+                          onAssignEmployee(
                             wagon,
                             day,
-                            "morning",
+                            shiftType,
                             e.target.value
                           )
                         }
+                        labelId={`${wagon}-${day}-${shiftType}-label`}
+                        className="schedule-select"
                       >
-                        <MenuItem value="">{"(üres)"}</MenuItem>
-                        {employeesList.map((employee) => (
-                          <MenuItem key={employee.name} value={employee.name}>
-                            {employee.name}
-                          </MenuItem>
-                        ))}
+                        <MenuItem value="">(üres)</MenuItem>
+                        {employeesList
+                          .sort((a, b) =>
+                            compareHungarianStrings(a.name, b.name)
+                          )
+                          .map((employee) => (
+                            <MenuItem
+                              key={employee.name}
+                              value={employee.name}
+                              style={{
+                                color: getColorForEmployee(
+                                  employee,
+                                  wagon,
+                                  index,
+                                  shiftType
+                                ),
+                              }}
+                            >
+                              {employee.name}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </TableCell>
                   ))}
                 </TableRow>
-                <TableRow>
-                  <TableCell className="schedule-cell afternoon">
-                    D.után
-                  </TableCell>
-                  {days.map((day) => (
-                    <TableCell
-                      key={`${wagon}-${day}-afternoon`}
-                      className={`schedule-cell ${day} afternoon`}
-                    >
-                      <Select
-                        className="schedule-select"
-                        labelId={`${wagon}-${day}-afternoon-label`}
-                        value={schedule[wagon]?.[day]?.afternoon || ""}
-                        onChange={(e) =>
-                          handleAssignEmployeeToCell(
-                            wagon,
-                            day,
-                            "afternoon",
-                            e.target.value
-                          )
-                        }
-                      >
-                        <MenuItem value="">{"(üres)"}</MenuItem>
-                        {employeesList.map((employee) => (
-                          <MenuItem key={employee.name} value={employee.name}>
-                            {employee.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </React.Fragment>
-            ))}
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

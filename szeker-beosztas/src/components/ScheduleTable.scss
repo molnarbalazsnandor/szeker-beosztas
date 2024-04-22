@@ -1,6 +1,7 @@
 .table-head {
   .table-row {
-    background-color: rgba(83, 53, 53, 0.5);
+    background-color: rgba(83, 53, 53, 0.3);
+
   }
 }
 
@@ -9,22 +10,49 @@
   display: flex;
   flex-direction: row;
 
+  .shifts-column {
+    border-right: 3px solid #ccc;
+  }
 
   .schedule-cell {
-    border: 1px solid #ddd;
     padding: 0px;
     height: 6vh;
     width: 10vw;
-
+    font-weight: 600;
+    font-size: large;
+    font-family: "Roboto Condensed", sans-serif;
+    color: rgba($color: #242323, $alpha: 1.0);
     text-align: center;
+
+
 
     .schedule-select {
       width: 100%;
+      font-weight: 600;
+      font-family: "Poppins", sans-serif;
+      color: rgba($color: #2c1c1c, $alpha: 1.0);
     }
   }
+
+  .wagon {
+    font-family: "Roboto Condensed", sans-serif;
+    font-weight: 900;
+    font-size: x-large;
+    padding: 4px;
+    color: rgba($color: #272626, $alpha: 1.0);
+    text-align: center;
+  }
+
+  .Dávid,
+  .Téka,
+  .Frodó,
+  .Abigél,
+  .Désiré {
+    background-color: rgba(198, 125, 125, 0.7);
+  }
+
 
   .afternoon {
     background-color: rgba(93, 91, 91, 0.4);
   }
-
 }

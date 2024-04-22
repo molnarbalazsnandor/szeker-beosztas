@@ -122,7 +122,11 @@ const AddEmployeeForm = ({
               onChange={handleShiftsChange}
               style={{ marginBottom: "10px" }}
             />
-            <Typography variant="h6" gutterBottom>
+            <Typography
+              variant="h6"
+              gutterBottom
+              style={{ paddingLeft: "10px" }}
+            >
               Preferált szekerek:
             </Typography>
             <FormGroup>
@@ -238,7 +242,7 @@ const AddEmployeeForm = ({
                       color="error"
                       style={{ marginLeft: "5px" }}
                     >
-                      Delete
+                      Törlés
                     </Button>
                   </Paper>
                 </ListItem>

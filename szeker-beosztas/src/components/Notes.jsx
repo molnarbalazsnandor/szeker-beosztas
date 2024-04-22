@@ -1,6 +1,6 @@
 // Notes.jsx
 import React, { useEffect, useState } from "react";
-import { Paper, Box, Button } from "@mui/material";
+import { Paper, Box, Button, Typography } from "@mui/material";
 import { wagons, days } from "./scheduleUtils";
 
 const Notes = ({ schedule, employeesList, handlePrint }) => {
@@ -150,11 +150,22 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
         alignItems: "center",
       }}
     >
-      <h2>Megjegyzések</h2>
+      <Typography variant="h4">Megjegyzések</Typography>
       <Box>
         <ul>
           {notes.map((note, index) => (
-            <li key={index}>{note}</li>
+            <li key={index}>
+              <Typography
+                variant="body1"
+                style={{
+                  color: note.includes("több szekérre is be lett osztva")
+                    ? "red"
+                    : "inherit",
+                }}
+              >
+                {note}
+              </Typography>
+            </li>
           ))}
         </ul>
       </Box>
@@ -170,6 +181,85 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
       >
         Beosztás lementése
       </Button>
+      <Paper
+        style={{
+          width: "auto",
+          height: "auto",
+          marginTop: "30%",
+          padding: "5px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "flex-start",
+        }}
+      >
+        <Typography style={{ alignSelf: "center" }} variant="h6">
+          Nevek színmagyarázata
+        </Typography>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <Box
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "green",
+              marginRight: "5px",
+              marginTop: "10px",
+            }}
+          ></Box>
+          <Typography variant="subtitle1">
+            : a könyvterjesztő ráér ekkor, és a szekér is megfelelő
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <Box
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "black",
+              marginRight: "5px",
+              marginTop: "10px",
+            }}
+          ></Box>
+          <Typography variant="subtitle1">
+            : a könyvterjesztő ráér ekkor, de a szekeret nem választotta
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <Box
+            style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: "red",
+              marginRight: "5px",
+              marginTop: "10px",
+            }}
+          ></Box>
+          <Typography variant="subtitle1">
+            : a könyvterjesztőnek nem alkalmas a műszak
+          </Typography>
+        </Box>
+      </Paper>
     </Paper>
   );
 };

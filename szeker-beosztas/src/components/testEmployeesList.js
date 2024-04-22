@@ -2,7 +2,7 @@ const testEmployeesList = [
   {
     name: "Béla",
     shifts: 4,
-    wagonPreferences: ["Dávid", "Bethlen"],
+    wagonPreferences: ["Dávid", "Bethlen", "Désiré"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, true, true, false, true, false],
@@ -11,7 +11,7 @@ const testEmployeesList = [
   {
     name: "Károly",
     shifts: 3,
-    wagonPreferences: ["Csehov", "Frodó"],
+    wagonPreferences: ["Csehov", "Frodó", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, false, true, false, false, false],
@@ -20,7 +20,7 @@ const testEmployeesList = [
   {
     name: "László",
     shifts: 5,
-    wagonPreferences: ["Zarándok", "Abigél"],
+    wagonPreferences: ["Zarándok", "Désiré"],
     shiftAvailability: {
       morning: [true, true, true, true, false, true, false],
       afternoon: [true, true, false, false, true, true, false],
@@ -29,7 +29,7 @@ const testEmployeesList = [
   {
     name: "Márta",
     shifts: 6,
-    wagonPreferences: ["Manfréd"],
+    wagonPreferences: ["Manfréd", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, true, true, true, false, false],
@@ -38,7 +38,7 @@ const testEmployeesList = [
   {
     name: "Géza",
     shifts: 2,
-    wagonPreferences: ["Dávid", "Téka"],
+    wagonPreferences: ["Dávid", "Téka", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, true, true, false, false, false],
       afternoon: [false, false, false, true, true, true, false],
@@ -47,7 +47,7 @@ const testEmployeesList = [
   {
     name: "Irén",
     shifts: 4,
-    wagonPreferences: ["Bethlen", "Csehov"],
+    wagonPreferences: ["Bethlen", "Csehov", "Désiré"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, false, true, true, false, false, false],
@@ -65,7 +65,7 @@ const testEmployeesList = [
   {
     name: "Györgyi",
     shifts: 5,
-    wagonPreferences: ["Abigél", "Manfréd"],
+    wagonPreferences: ["Abigél", "Manfréd", "Désiré"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, true, false, false, true, false],
@@ -101,7 +101,7 @@ const testEmployeesList = [
   {
     name: "Réka",
     shifts: 5,
-    wagonPreferences: ["Manfréd"],
+    wagonPreferences: ["Manfréd", "Désiré"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, true, false, true, false, false],
@@ -110,7 +110,7 @@ const testEmployeesList = [
   {
     name: "Barnabás",
     shifts: 3,
-    wagonPreferences: ["Dávid", "Téka"],
+    wagonPreferences: ["Dávid", "Téka", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, false, false, true, false, false],
@@ -119,7 +119,7 @@ const testEmployeesList = [
   {
     name: "Enikő",
     shifts: 4,
-    wagonPreferences: ["Bethlen", "Csehov"],
+    wagonPreferences: ["Bethlen", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, false, false, true, false, false],
@@ -128,7 +128,7 @@ const testEmployeesList = [
   {
     name: "Miklós",
     shifts: 2,
-    wagonPreferences: ["Frodó", "Zarándok"],
+    wagonPreferences: ["Frodó", "Désiré"],
     shiftAvailability: {
       morning: [true, true, false, false, true, false, false],
       afternoon: [true, true, false, false, true, false, false],
@@ -162,9 +162,9 @@ const testEmployeesList = [
     },
   },
   {
-    name: "Ferenc",
+    name: "Özséb",
     shifts: 4,
-    wagonPreferences: ["Dávid", "Bethlen"],
+    wagonPreferences: ["Dávid", "Bethlen", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, true, true, true, true, true],
       afternoon: [true, true, true, true, true, true, true],
@@ -200,7 +200,7 @@ const testEmployeesList = [
   {
     name: "Péter",
     shifts: 5,
-    wagonPreferences: ["Bethlen", "Csehov"],
+    wagonPreferences: ["Bethlen", "Csehov", "Désiré"],
     shiftAvailability: {
       morning: [true, true, true, false, true, true, true],
       afternoon: [true, true, true, false, true, true, true],
@@ -227,7 +227,7 @@ const testEmployeesList = [
   {
     name: "Ibolya",
     shifts: 4,
-    wagonPreferences: ["Dávid", "Téka"],
+    wagonPreferences: ["Dávid", "Désiré", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, true, false, true, true, true],
       afternoon: [true, true, true, false, true, true, true],
@@ -236,7 +236,7 @@ const testEmployeesList = [
   {
     name: "Lajos",
     shifts: 5,
-    wagonPreferences: ["Bethlen", "Csehov"],
+    wagonPreferences: ["Bethlen", "Csehov", "Nyugati"],
     shiftAvailability: {
       morning: [true, true, true, false, true, true, true],
       afternoon: [true, true, true, false, true, true, true],
