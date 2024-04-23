@@ -45,6 +45,12 @@
   flex-direction: row;
   padding: 3px;
 }
+.employee-form-paper .button-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .employee-form-paper .employee-button {
   margin: 5px;
   width: 30%;

@@ -57,10 +57,6 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
     }
   };
 
-  const handleAssignEmployeeToCell = (wagon, day, shiftType, employee) => {
-    onAssignEmployee(wagon, day, shiftType, employee);
-  };
-
   const compareHungarianStrings = (a, b) => {
     return a.localeCompare(b, "hu");
   };
@@ -88,7 +84,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
   };
 
   return (
-    <Box className="schedule-table">
+    <Box className="schedule-table-box">
       <TableContainer component={Paper}>
         <Table
           className="schedule-table"
@@ -179,7 +175,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                             ))}
                         </Select>
                       ) : (
-                        <Typography variant="body1">---</Typography>
+                        <Typography variant="body1">------</Typography>
                       )}
                     </TableCell>
                   ))}

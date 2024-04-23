@@ -6,6 +6,7 @@ import AddEmployeeForm from "./components/AddEmployeeForm";
 import {
   sortEmployeesIntoSchedule,
   createInitialSchedule,
+  fillSingleShift,
 } from "./components/scheduleUtils";
 import testEmployeesList from "./components/testEmployeesList";
 import "./App.css";
@@ -14,6 +15,7 @@ import { padding } from "@mui/system";
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
   const [employeesList, setEmployeesList] = useState(testEmployeesList);
+  const [isSortClicked, setIsSortClicked] = useState(false);
 
   let theme = createTheme({
     palette: {
@@ -64,6 +66,7 @@ const App = () => {
     console.log("Sorted Schedule:", updatedSchedule);
     // You may want to update the state or perform any other actions based on the sorted schedule
     setSchedule(updatedSchedule); // Update the main schedule with the updated schedule
+    setIsSortClicked(true);
   };
 
   // Function to delete an employee
@@ -72,6 +75,12 @@ const App = () => {
       (employee) => employee.name !== employeeName
     );
     setEmployeesList(updatedList);
+  };
+
+  // Handler function for filling a single shift
+  const handleFillSingleShift = () => {
+    const updatedSchedule = fillSingleShift({ ...schedule }, employeesList);
+    setSchedule(updatedSchedule);
   };
 
   return (
@@ -93,6 +102,8 @@ const App = () => {
             onAddEmployee={handleAddEmployee}
             onDeleteEmployee={handleDeleteEmployee}
             onSortEmployees={handleSortEmployees}
+            onFillSingleShift={handleFillSingleShift}
+            isSortClicked={isSortClicked}
           />
           <Box
             style={{

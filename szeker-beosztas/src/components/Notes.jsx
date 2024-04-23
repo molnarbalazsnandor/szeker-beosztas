@@ -144,7 +144,7 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
       className="notes-box"
       style={{
         padding: "20px",
-        minWidth: "25%",
+        width: "27vw",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

@@ -4,10 +4,11 @@
   }
 }
 
-.schedule-table {
+.schedule-table-box {
   margin: auto;
   display: flex;
   flex-direction: row;
+  overflow-x: scroll;
 
   .shifts-column {
     border-right: 3px solid #ccc;
@@ -43,11 +44,11 @@
     text-align: center;
   }
 
-  .Dávid,
-  .Téka,
-  .Frodó,
   .Abigél,
-  .Désiré {
+  .Dávid,
+  .Csehov,
+  .Manfréd,
+  .Téka {
     background-color: rgba(198, 125, 125, 0.7);
   }
 

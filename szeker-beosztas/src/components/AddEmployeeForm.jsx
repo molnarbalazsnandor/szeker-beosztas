@@ -24,12 +24,12 @@ import { wagons, days } from "./scheduleUtils";
 import "./AddEmployeeForm.css";
 
 const AddEmployeeForm = ({
-  schedule,
-  setSchedule,
   employeesList,
   onAddEmployee,
   onDeleteEmployee,
   onSortEmployees,
+  onFillSingleShift,
+  isSortClicked,
 }) => {
   const [employee, setEmployee] = useState({
     name: "",
@@ -298,14 +298,26 @@ const AddEmployeeForm = ({
             </List>
           </Box>
         )}
-        <Button
-          onClick={onSortEmployees}
-          variant="contained"
-          color="primary"
-          className="employee-button"
-        >
-          Beoszt
-        </Button>
+        <Box className="button-box">
+          <Button
+            onClick={onSortEmployees}
+            variant="contained"
+            color="primary"
+            className="employee-button"
+            style={{ backgroundColor: "#1b2035" }}
+          >
+            Beoszt
+          </Button>
+          <Button
+            onClick={onFillSingleShift}
+            variant="contained"
+            color="primary"
+            className="employee-button"
+            disabled={!isSortClicked}
+          >
+            Feltölt
+          </Button>
+        </Box>
       </Paper>
     </Paper>
   );

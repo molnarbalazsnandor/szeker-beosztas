@@ -51,6 +51,13 @@
     }
   }
 
+  .button-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .employee-button {
     margin: 5px;
     width: 30%;
