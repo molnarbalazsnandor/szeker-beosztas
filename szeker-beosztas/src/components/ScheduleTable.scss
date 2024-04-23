@@ -1,7 +1,6 @@
 .table-head {
   .table-row {
     background-color: rgba(83, 53, 53, 0.3);
-
   }
 }
 
@@ -19,7 +18,7 @@
     height: 6vh;
     width: 10vw;
     font-weight: 600;
-    font-size: large;
+    font-size: 22px;
     font-family: "Roboto Condensed", sans-serif;
     color: rgba($color: #242323, $alpha: 1.0);
     text-align: center;
@@ -30,14 +29,15 @@
       width: 100%;
       font-weight: 600;
       font-family: "Poppins", sans-serif;
-      color: rgba($color: #2c1c1c, $alpha: 1.0);
+      font-size: 17px;
+      color: rgba($color: #271d1d, $alpha: 1.0);
     }
   }
 
   .wagon {
     font-family: "Roboto Condensed", sans-serif;
     font-weight: 900;
-    font-size: x-large;
+    font-size: 25px;
     padding: 4px;
     color: rgba($color: #272626, $alpha: 1.0);
     text-align: center;

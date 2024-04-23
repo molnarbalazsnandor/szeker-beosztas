@@ -18,6 +18,7 @@ import {
   ListItemText,
   Paper,
   Box,
+  Tooltip,
 } from "@mui/material";
 import { wagons, days } from "./scheduleUtils";
 import "./AddEmployeeForm.css";
@@ -98,6 +99,12 @@ const AddEmployeeForm = ({
     }
   };
 
+  const getAvailableDays = (availability, days) => {
+    return days
+      .filter((day, index) => availability[index]) // Filter days based on availability
+      .join(", "); // Join the day names with commas
+  };
+
   return (
     <Paper className="employee-form-paper" elevation={5}>
       <Paper className="employee-form">
@@ -130,9 +137,22 @@ const AddEmployeeForm = ({
               Preferált szekerek:
             </Typography>
             <FormGroup>
-              <List style={{ columnCount: 2 }}>
-                {wagons.map((wagon) => (
-                  <ListItem key={wagon}>
+              <List
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                }}
+              >
+                {Object.keys(wagons).map((wagon) => (
+                  <ListItem
+                    key={wagon}
+                    style={{
+                      width: "10vw",
+                      flexGrow: 0,
+                      flexBasis: "auto",
+                    }}
+                  >
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -233,19 +253,47 @@ const AddEmployeeForm = ({
           <Box>
             <List className="employee-list">
               {employeesList.map((emp, index) => (
-                <ListItem className="employee-list-item" key={index}>
-                  <Paper className="employee-list-item">
-                    <ListItemText primary={emp.name} />
-                    <Button
-                      onClick={() => onDeleteEmployee(emp.name)}
-                      variant="contained"
-                      color="error"
-                      style={{ marginLeft: "5px" }}
-                    >
-                      Törlés
-                    </Button>
-                  </Paper>
-                </ListItem>
+                <Tooltip
+                  key={index}
+                  title={
+                    <React.Fragment>
+                      <Typography color="inherit">
+                        <strong>Műszakszám:</strong> {emp.shifts}
+                      </Typography>
+                      <Typography color="inherit">
+                        <strong>Pref. szekerek: </strong>
+                        {emp.wagonPreferences.join(", ")}
+                      </Typography>
+                      <Typography color="inherit">
+                        <strong>D.e. műszakok:</strong>{" "}
+                        {getAvailableDays(emp.shiftAvailability.morning, days)}
+                      </Typography>
+                      <Typography color="inherit">
+                        <strong>D.u. műszakok:</strong>{" "}
+                        {getAvailableDays(
+                          emp.shiftAvailability.afternoon,
+                          days
+                        )}
+                      </Typography>
+                    </React.Fragment>
+                  }
+                  placement="top"
+                  arrow
+                >
+                  <ListItem className="employee-list-item">
+                    <Paper className="employee-list-item">
+                      <ListItemText primary={emp.name} />
+                      <Button
+                        onClick={() => onDeleteEmployee(emp.name)}
+                        variant="contained"
+                        color="error"
+                        style={{ marginLeft: "5px" }}
+                      >
+                        Törlés
+                      </Button>
+                    </Paper>
+                  </ListItem>
+                </Tooltip>
               ))}
             </List>
           </Box>

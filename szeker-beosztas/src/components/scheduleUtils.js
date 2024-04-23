@@ -1,15 +1,45 @@
-const wagons = [
-  "Dávid",
-  "Bethlen",
-  "Téka",
-  "Csehov",
-  "Frodó",
-  "Zarándok",
-  "Abigél",
-  "Manfréd",
-  "Désiré",
-  "Nyugati",
-];
+const wagons = {
+  Abigél: {
+    morning: [true, true, true, true, true, false, false],
+    afternoon: [true, true, true, true, true, false, false],
+  },
+  Bethlen: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
+  Dávid: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
+  Désiré: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
+  Csehov: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
+  Frodó: {
+    morning: [true, true, true, true, true, true, false],
+    afternoon: [true, true, true, true, true, false, false],
+  },
+  Manfréd: {
+    morning: [true, true, true, true, true, true, false],
+    afternoon: [true, true, true, true, true, false, false],
+  },
+  Nyugati: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
+  Téka: {
+    morning: [true, true, true, true, true, true, false],
+    afternoon: [true, true, true, true, true, false, false],
+  },
+  Zarándok: {
+    morning: [true, true, true, true, true, true, false],
+    afternoon: [false, false, false, false, false, false, false],
+  },
+};
 
 const days = [
   "Hétfő",
@@ -23,7 +53,7 @@ const days = [
 
 const createInitialSchedule = () => {
   const initialSchedule = {};
-  wagons.forEach((wagon) => {
+  Object.keys(wagons).forEach((wagon) => {
     initialSchedule[wagon] = {};
     days.forEach((day) => {
       initialSchedule[wagon][day] = { morning: "", afternoon: "" };
@@ -114,21 +144,24 @@ const findAvailableSlot = (
       return; // Skip to the next day if already booked elsewhere
     }
 
-    // Check if the employee is available for the shift on that day
-    if (shiftAvailability[shiftType][getDayIndex(day)]) {
-      for (let i = 0; i < wagonPreferences.length; i++) {
-        const wagon = wagonPreferences[i];
+    const dayIndex = getDayIndex(day);
 
-        // Check if the wagon, day, and shift type are initialized in the schedule and empty
-        if (
-          schedule[wagon] &&
-          schedule[wagon][day] &&
-          schedule[wagon][day][shiftType] === ""
-        ) {
-          availableSlots.push({ wagon, day, shiftType });
+    // Check if the wagon is open for the specified shift on that day
+    wagonPreferences.forEach((wagon) => {
+      if (wagons[wagon][shiftType][dayIndex]) {
+        // Check if the employee is available for the shift on that day
+        if (shiftAvailability[shiftType][dayIndex]) {
+          // Check if the wagon, day, and shift type are initialized in the schedule and empty
+          if (
+            schedule[wagon] &&
+            schedule[wagon][day] &&
+            schedule[wagon][day][shiftType] === ""
+          ) {
+            availableSlots.push({ wagon, day, shiftType });
+          }
         }
       }
-    }
+    });
   });
 
   // Return a random available slot, or null if none are available

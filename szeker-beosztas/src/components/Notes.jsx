@@ -105,14 +105,14 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
       const duplicateWagons = new Set();
 
       // Check morning shift
-      wagons.forEach((wagon) => {
+      Object.keys(wagons).forEach((wagon) => {
         if (schedule[wagon][day].morning === employee.name) {
           duplicateWagons.add(wagon);
         }
       });
 
       // Check afternoon shift
-      wagons.forEach((wagon) => {
+      Object.keys(wagons).forEach((wagon) => {
         if (schedule[wagon][day].afternoon === employee.name) {
           duplicateWagons.add(wagon);
         }
@@ -158,9 +158,11 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
               <Typography
                 variant="body1"
                 style={{
-                  color: note.includes("több szekérre is be lett osztva")
-                    ? "red"
-                    : "inherit",
+                  color:
+                    note.includes("több szekérre is be lett osztva") ||
+                    note.includes("nem ér rá")
+                      ? "red"
+                      : "inherit",
                 }}
               >
                 {note}

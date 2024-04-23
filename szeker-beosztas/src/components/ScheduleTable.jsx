@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Box,
+  Typography,
 } from "@mui/material";
 import "./ScheduleTable.css";
 import { wagons, days } from "./scheduleUtils";
@@ -82,6 +83,10 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
     return "black";
   };
 
+  const isWagonOpen = (wagon, dayIndex, shiftType) => {
+    return wagons[wagon][shiftType][dayIndex];
+  };
+
   return (
     <Box className="schedule-table">
       <TableContainer component={Paper}>
@@ -116,7 +121,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
             </TableRow>
           </TableHead>
           <TableBody className="table-body">
-            {wagons.map((wagon) =>
+            {Object.keys(wagons).map((wagon) =>
               ["morning", "afternoon"].map((shiftType) => (
                 <TableRow key={`${wagon}-${shiftType}`} className="table-row">
                   {shiftType === "morning" && (
@@ -137,41 +142,45 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
                       key={`${wagon}-${day}-${shiftType}`}
                       className={`schedule-cell ${day} ${shiftType}`}
                     >
-                      <Select
-                        value={schedule[wagon]?.[day]?.[shiftType] || ""}
-                        onChange={(e) =>
-                          onAssignEmployee(
-                            wagon,
-                            day,
-                            shiftType,
-                            e.target.value
-                          )
-                        }
-                        labelId={`${wagon}-${day}-${shiftType}-label`}
-                        className="schedule-select"
-                      >
-                        <MenuItem value="">(üres)</MenuItem>
-                        {employeesList
-                          .sort((a, b) =>
-                            compareHungarianStrings(a.name, b.name)
-                          )
-                          .map((employee) => (
-                            <MenuItem
-                              key={employee.name}
-                              value={employee.name}
-                              style={{
-                                color: getColorForEmployee(
-                                  employee,
-                                  wagon,
-                                  index,
-                                  shiftType
-                                ),
-                              }}
-                            >
-                              {employee.name}
-                            </MenuItem>
-                          ))}
-                      </Select>
+                      {isWagonOpen(wagon, days.indexOf(day), shiftType) ? (
+                        <Select
+                          value={schedule[wagon]?.[day]?.[shiftType] || ""}
+                          onChange={(e) =>
+                            onAssignEmployee(
+                              wagon,
+                              day,
+                              shiftType,
+                              e.target.value
+                            )
+                          }
+                          labelId={`${wagon}-${day}-${shiftType}-label`}
+                          className="schedule-select"
+                        >
+                          <MenuItem value="">(üres)</MenuItem>
+                          {employeesList
+                            .sort((a, b) =>
+                              compareHungarianStrings(a.name, b.name)
+                            )
+                            .map((employee) => (
+                              <MenuItem
+                                key={employee.name}
+                                value={employee.name}
+                                style={{
+                                  color: getColorForEmployee(
+                                    employee,
+                                    wagon,
+                                    days.indexOf(day),
+                                    shiftType
+                                  ),
+                                }}
+                              >
+                                {employee.name}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      ) : (
+                        <Typography variant="body1">---</Typography>
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
