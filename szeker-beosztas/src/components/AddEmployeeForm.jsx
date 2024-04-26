@@ -28,8 +28,9 @@ const AddEmployeeForm = ({
   onAddEmployee,
   onDeleteEmployee,
   onSortEmployees,
-  onFillSingleShift,
+  onFillRemainingShifts,
   isSortClicked,
+  onEqualizeShift,
 }) => {
   const [employee, setEmployee] = useState({
     name: "",
@@ -114,6 +115,12 @@ const AddEmployeeForm = ({
               label="Könyvterjesztő neve"
               variant="outlined"
               fullWidth
+              error={employeesList.some((emp) => emp.name === employee.name)}
+              helperText={
+                employeesList.some((emp) => emp.name === employee.name)
+                  ? "Ilyen nevű könyvterjesztő már van!"
+                  : ""
+              }
               value={employee.name}
               onChange={handleInputChange}
               style={{
@@ -125,6 +132,7 @@ const AddEmployeeForm = ({
               variant="outlined"
               type="number"
               fullWidth
+              inputProps={{ min: 1, max: 14 }}
               value={employee.shifts}
               onChange={handleShiftsChange}
               style={{ marginBottom: "10px" }}
@@ -304,18 +312,28 @@ const AddEmployeeForm = ({
             variant="contained"
             color="primary"
             className="employee-button"
-            style={{ backgroundColor: "#1b2035" }}
           >
             Beoszt
           </Button>
           <Button
-            onClick={onFillSingleShift}
+            onClick={onFillRemainingShifts}
             variant="contained"
             color="primary"
             className="employee-button"
             disabled={!isSortClicked}
+            style={{ backgroundColor: isSortClicked ? "#1b2035" : "" }}
           >
             Feltölt
+          </Button>
+          <Button
+            onClick={onEqualizeShift}
+            variant="contained"
+            color="primary"
+            className="employee-button"
+            disabled={!isSortClicked}
+            style={{ backgroundColor: isSortClicked ? "#1d351b" : "" }}
+          >
+            Kiegyenlít
           </Button>
         </Box>
       </Paper>

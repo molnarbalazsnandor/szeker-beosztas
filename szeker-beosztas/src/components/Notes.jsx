@@ -1,7 +1,12 @@
 // Notes.jsx
 import React, { useEffect, useState } from "react";
 import { Paper, Box, Button, Typography } from "@mui/material";
-import { wagons, days } from "./scheduleUtils";
+import {
+  wagons,
+  days,
+  findDuplicateShifts,
+  getDayIndex,
+} from "./scheduleUtils";
 
 const Notes = ({ schedule, employeesList, handlePrint }) => {
   const [notes, setNotes] = useState([]);
@@ -40,9 +45,15 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
           }!`
         );
       });
-      const duplicateShifts = findDuplicateShifts(employee);
+
+      // Use the modified helper function to find duplicate shifts
+      const duplicateShifts = findDuplicateShifts(employee, schedule);
       if (duplicateShifts.length > 0) {
-        duplicateShifts.forEach((note) => newNotes.push(note));
+        duplicateShifts.forEach(({ day, wagons }) => {
+          newNotes.push(
+            `${name} több szekérre is be lett osztva (${wagons}) ezen a napon: ${day}!`
+          );
+        });
       }
     });
     setNotes(newNotes);
@@ -97,48 +108,6 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
     return unavailableShifts;
   };
 
-  const findDuplicateShifts = (employee) => {
-    const duplicateShifts = [];
-
-    // Iterate over each day in the schedule
-    days.forEach((day) => {
-      const duplicateWagons = new Set();
-
-      // Check morning shift
-      Object.keys(wagons).forEach((wagon) => {
-        if (schedule[wagon][day].morning === employee.name) {
-          duplicateWagons.add(wagon);
-        }
-      });
-
-      // Check afternoon shift
-      Object.keys(wagons).forEach((wagon) => {
-        if (schedule[wagon][day].afternoon === employee.name) {
-          duplicateWagons.add(wagon);
-        }
-      });
-
-      // If multiple wagons have the same shift on the same day, add it to the duplicateShifts array
-      if (duplicateWagons.size > 1) {
-        duplicateShifts.push({
-          day,
-          wagons: Array.from(duplicateWagons).join(","),
-        });
-      }
-    });
-
-    // Generate notes for duplicate shifts
-    const notes = duplicateShifts.map(({ day, wagons }) => {
-      return `${employee.name} több szekérre is be lett osztva (${wagons}) ezen a napon: ${day}!`;
-    });
-
-    return notes;
-  };
-
-  const getDayIndex = (day) => {
-    return days.indexOf(day);
-  };
-
   return (
     <Paper
       className="notes-box"
@@ -153,22 +122,24 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
       <Typography variant="h4">Megjegyzések</Typography>
       <Box>
         <ul>
-          {notes.map((note, index) => (
-            <li key={index}>
-              <Typography
-                variant="body1"
-                style={{
-                  color:
-                    note.includes("több szekérre is be lett osztva") ||
-                    note.includes("nem ér rá")
-                      ? "red"
-                      : "inherit",
-                }}
-              >
-                {note}
-              </Typography>
-            </li>
-          ))}
+          {notes
+            .sort((a, b) => a.localeCompare(b, "hu"))
+            .map((note, index) => (
+              <li key={index}>
+                <Typography
+                  variant="body1"
+                  style={{
+                    color:
+                      note.includes("több szekérre is be lett osztva") ||
+                      note.includes("nem ér rá")
+                        ? "red"
+                        : "inherit",
+                  }}
+                >
+                  {note}
+                </Typography>
+              </li>
+            ))}
         </ul>
       </Box>
       <Button

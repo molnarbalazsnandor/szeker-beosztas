@@ -1,16 +1,16 @@
 // App.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Box, Typography, createTheme, ThemeProvider } from "@mui/material";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
 import {
   sortEmployeesIntoSchedule,
   createInitialSchedule,
-  fillSingleShift,
+  fillRemainingShifts,
+  equalizeShifts,
 } from "./components/scheduleUtils";
 import testEmployeesList from "./components/testEmployeesList";
 import "./App.css";
-import { padding } from "@mui/system";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
@@ -47,25 +47,22 @@ const App = () => {
       // Update the employee for the specified shift
       newSchedule[wagon][day][shiftType] = employee;
 
-      console.log("App.js Updated Schedule:", newSchedule); // Log the updated schedule
+      console.log("App.js Updated Schedule:", newSchedule);
       return newSchedule;
     });
   };
 
   const handleSortEmployees = () => {
-    // Reset the schedule before sorting
     const initialSchedule = createInitialSchedule();
     setSchedule(initialSchedule);
 
-    // Sort employees into the updated schedule
     const updatedSchedule = sortEmployeesIntoSchedule(
       { ...initialSchedule },
       employeesList
     );
 
     console.log("Sorted Schedule:", updatedSchedule);
-    // You may want to update the state or perform any other actions based on the sorted schedule
-    setSchedule(updatedSchedule); // Update the main schedule with the updated schedule
+    setSchedule(updatedSchedule);
     setIsSortClicked(true);
   };
 
@@ -78,9 +75,14 @@ const App = () => {
   };
 
   // Handler function for filling a single shift
-  const handleFillSingleShift = () => {
-    const updatedSchedule = fillSingleShift({ ...schedule }, employeesList);
-    setSchedule(updatedSchedule);
+  const handleFillRemainingShifts = () => {
+    const updatedSchedule = fillRemainingShifts({ ...schedule }, employeesList);
+    setSchedule({ ...updatedSchedule });
+  };
+
+  const handleEqualizeShift = () => {
+    const updatedSchedule = equalizeShifts({ ...schedule }, employeesList);
+    setSchedule({ ...updatedSchedule });
   };
 
   return (
@@ -102,8 +104,9 @@ const App = () => {
             onAddEmployee={handleAddEmployee}
             onDeleteEmployee={handleDeleteEmployee}
             onSortEmployees={handleSortEmployees}
-            onFillSingleShift={handleFillSingleShift}
+            onFillRemainingShifts={handleFillRemainingShifts}
             isSortClicked={isSortClicked}
+            onEqualizeShift={handleEqualizeShift}
           />
           <Box
             style={{
