@@ -1,5 +1,5 @@
 // App.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, createTheme, ThemeProvider } from "@mui/material";
 import ScheduleTable from "./components/ScheduleTable";
 import AddEmployeeForm from "./components/AddEmployeeForm";
@@ -14,7 +14,7 @@ import "./App.css";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
-  const [employeesList, setEmployeesList] = useState(testEmployeesList);
+  const [employeesList, setEmployeesList] = useState([]);
   const [isSortClicked, setIsSortClicked] = useState(false);
 
   let theme = createTheme({
@@ -28,8 +28,24 @@ const App = () => {
     },
   });
 
+  // Load employeesList from local storage on component mount
+  useEffect(() => {
+    const storedEmployeesList = JSON.parse(
+      localStorage.getItem("employeesList")
+    );
+    if (storedEmployeesList && storedEmployeesList.length > 0) {
+      setEmployeesList(storedEmployeesList);
+    }
+  }, []);
+
+  // Save employeesList to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("employeesList", JSON.stringify(employeesList));
+  }, [employeesList]);
+
   const handleAddEmployee = (employee) => {
-    setEmployeesList([...employeesList, employee]);
+    const updatedEmployeesList = [...employeesList, employee];
+    setEmployeesList(updatedEmployeesList);
   };
 
   const handleAssignEmployee = (wagon, day, shiftType, employee) => {
@@ -101,6 +117,7 @@ const App = () => {
           <AddEmployeeForm
             schedule={schedule}
             employeesList={employeesList}
+            setEmployeesList={setEmployeesList}
             onAddEmployee={handleAddEmployee}
             onDeleteEmployee={handleDeleteEmployee}
             onSortEmployees={handleSortEmployees}

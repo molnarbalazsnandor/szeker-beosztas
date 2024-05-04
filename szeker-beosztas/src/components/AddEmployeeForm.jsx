@@ -19,12 +19,17 @@ import {
   Paper,
   Box,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { wagons, days } from "./scheduleUtils";
 import "./AddEmployeeForm.css";
 
 const AddEmployeeForm = ({
   employeesList,
+  setEmployeesList,
   onAddEmployee,
   onDeleteEmployee,
   onSortEmployees,
@@ -41,6 +46,7 @@ const AddEmployeeForm = ({
       afternoon: Array(7).fill(false),
     },
   });
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   useEffect(() => {
     console.log("Employee List:", employeesList);
@@ -104,6 +110,16 @@ const AddEmployeeForm = ({
     return days
       .filter((day, index) => availability[index]) // Filter days based on availability
       .join(", "); // Join the day names with commas
+  };
+
+  const handleConfirmClearAllEmployees = () => {
+    setOpenConfirmDialog(true);
+  };
+
+  const handleClearAllEmployees = () => {
+    setEmployeesList([]);
+    localStorage.removeItem("employeesList");
+    setOpenConfirmDialog(false);
   };
 
   return (
@@ -303,6 +319,46 @@ const AddEmployeeForm = ({
                   </ListItem>
                 </Tooltip>
               ))}
+              <ListItem className="employee-list-item">
+                <Paper className="employee-list-item">
+                  <Button
+                    variant="contained"
+                    color="error"
+                    style={{ backgroundColor: "rgba(31, 27, 28, 1)" }}
+                    onClick={handleConfirmClearAllEmployees}
+                  >
+                    Mindenki törlése
+                  </Button>
+                </Paper>
+              </ListItem>
+              <Dialog
+                open={openConfirmDialog}
+                onClose={() => setOpenConfirmDialog(false)}
+              >
+                <DialogTitle>Minden könyvterjesztő törlése</DialogTitle>
+                <DialogContent>
+                  <Typography variant="body1">
+                    Biztosan törölni szeretnéd az összes könyvterjesztőt?
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={handleClearAllEmployees}
+                    variant="contained"
+                    color="error"
+                  >
+                    Igen
+                  </Button>
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: "rgba(112, 112, 112, 1)" }}
+                    onClick={() => setOpenConfirmDialog(false)}
+                    autoFocus
+                  >
+                    Mégse
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </List>
           </Box>
         )}

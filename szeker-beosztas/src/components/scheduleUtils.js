@@ -153,7 +153,6 @@ const fillRemainingShifts = (schedule, employeesList) => {
 
   console.log("Filled Schedule:", schedule);
 
-  // Introduce a 2-second delay before finding and removing duplicate shifts
   removeDuplicateShifts(schedule, employeesList);
 
   return schedule;
@@ -205,30 +204,105 @@ const equalizeShifts = (schedule, employeesList) => {
     });
 
     if (assignedShifts > shifts) {
-      const shiftsToRemove = [];
+      const excessShifts = [];
       Object.keys(schedule).forEach((wagon) => {
         Object.keys(schedule[wagon]).forEach((day) => {
-          if (schedule[wagon][day].morning === name) {
-            shiftsToRemove.push({ wagon, day, shiftType: "morning" });
-          }
-          if (schedule[wagon][day].afternoon === name) {
-            shiftsToRemove.push({ wagon, day, shiftType: "afternoon" });
+          if (
+            (schedule[wagon][day].morning === name &&
+              excessShifts.length < assignedShifts - shifts) ||
+            (schedule[wagon][day].afternoon === name &&
+              excessShifts.length < assignedShifts - shifts)
+          ) {
+            excessShifts.push({ wagon, day });
           }
         });
       });
 
-      const shiftIndex = Math.floor(Math.random() * shiftsToRemove.length);
-      const shiftToRemove = shiftsToRemove[shiftIndex];
-      schedule[shiftToRemove.wagon][shiftToRemove.day][
-        shiftToRemove.shiftType
-      ] = "";
+      console.log("Excess shifts:", excessShifts);
+
+      // Randomly select an excess shift to remove
+      const shiftIndex = Math.floor(Math.random() * excessShifts.length);
+      const shiftToRemove = excessShifts[shiftIndex];
+
+      console.log("Shift to remove:", shiftToRemove);
+
+      // Remove the selected excess shift
+      const shiftType =
+        schedule[shiftToRemove.wagon][shiftToRemove.day].morning === name
+          ? "morning"
+          : "afternoon";
+      schedule[shiftToRemove.wagon][shiftToRemove.day][shiftType] = "";
       console.log(
-        `Removed shift from ${name} at ${shiftToRemove.wagon} on ${shiftToRemove.day} ${shiftToRemove.shiftType}`
+        `Removed excess shift from ${name} at ${shiftToRemove.wagon} on ${shiftToRemove.day} ${shiftType}`
       );
       changeMade = true;
-      console.log("Equalized shift (excess removed):", schedule);
+
+      // Find an available employee to assign the replacement shift
+      const { wagon, day } = shiftToRemove;
+      const shiftAvailability = employeesList.map(
+        (employee) => employee.shiftAvailability
+      );
+      const wagonPreferences = employeesList.map(
+        (employee) => employee.wagonPreferences
+      );
+      const availableEmployees = employeesList.filter(
+        (employee, index) =>
+          wagonPreferences[index].includes(wagon) &&
+          shiftAvailability[index][shiftType][days.indexOf(day)] &&
+          employee.name !== name // Ensure the replacement shift is not assigned to the same person
+      );
+
+      console.log("Available employees for replacement:", availableEmployees);
+
+      // If there are available employees, randomly select one and assign them to the shift
+      if (availableEmployees.length > 0) {
+        const selectedEmployee =
+          availableEmployees[
+            Math.floor(Math.random() * availableEmployees.length)
+          ];
+        schedule[wagon][day][shiftType] = selectedEmployee.name;
+        console.log(
+          `Reassigned shift to ${selectedEmployee.name} at ${wagon} on ${day} ${shiftType}`
+        );
+
+        // Check for duplicate shifts and replace them if necessary
+        const duplicateShifts = findDuplicateShifts(selectedEmployee, schedule);
+        console.log("Duplicate shifts:", duplicateShifts);
+
+        duplicateShifts.forEach((duplicate) => {
+          const { day } = duplicate;
+          // Ensure the wagon exists before accessing it
+          if (schedule[duplicate.wagon]) {
+            // Clear the conflicting shift
+            if (
+              schedule[duplicate.wagon][day].morning ===
+                selectedEmployee.name &&
+              shiftType !== "morning"
+            ) {
+              schedule[duplicate.wagon][day].morning = "";
+            }
+            if (
+              schedule[duplicate.wagon][day].afternoon ===
+                selectedEmployee.name &&
+              shiftType !== "afternoon"
+            ) {
+              schedule[duplicate.wagon][day].afternoon = "";
+            }
+          }
+        });
+      } else {
+        console.log(
+          `No available employee found to replace the removed shift at ${wagon} on ${day} ${shiftType}`
+        );
+      }
+
+      console.log("Equalized shift (excess removed and replaced):", schedule);
       return schedule;
     }
+  }
+
+  if (!changeMade) {
+    console.log("No changes were made.");
   }
 
   // If no excess shifts were removed, find someone with fewer shifts than requested
@@ -303,14 +377,6 @@ const equalizeShifts = (schedule, employeesList) => {
   return schedule;
 };
 
-// Function to shuffle an array using Fisher-Yates algorithm (modern version)
-const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-};
-
 const findAvailableSlot = (
   schedule,
   wagonPreferences,
@@ -355,6 +421,14 @@ const findAvailableSlot = (
   return availableSlots.length > 0
     ? availableSlots[Math.floor(Math.random() * availableSlots.length)]
     : null;
+};
+
+// Function to shuffle an array using Fisher-Yates algorithm (modern version)
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 };
 
 //Helper function for both fillSingleShift and for generateNotes in Note.jsx
