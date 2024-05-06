@@ -14,7 +14,7 @@ import "./App.css";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
-  const [employeesList, setEmployeesList] = useState([]);
+  const [employeesList, setEmployeesList] = useState(testEmployeesList);
   const [isSortClicked, setIsSortClicked] = useState(false);
 
   let theme = createTheme({

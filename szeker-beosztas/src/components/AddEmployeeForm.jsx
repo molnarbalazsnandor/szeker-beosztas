@@ -324,7 +324,7 @@ const AddEmployeeForm = ({
                   <Button
                     variant="contained"
                     color="error"
-                    style={{ backgroundColor: "rgba(31, 27, 28, 1)" }}
+                    style={{ backgroundColor: "rgba(50, 49, 49, 1)" }}
                     onClick={handleConfirmClearAllEmployees}
                   >
                     Mindenki törlése

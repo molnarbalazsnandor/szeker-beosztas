@@ -265,31 +265,72 @@ const equalizeShifts = (schedule, employeesList) => {
           `Reassigned shift to ${selectedEmployee.name} at ${wagon} on ${day} ${shiftType}`
         );
 
-        // Check for duplicate shifts and replace them if necessary
-        const duplicateShifts = findDuplicateShifts(selectedEmployee, schedule);
-        console.log("Duplicate shifts:", duplicateShifts);
+        let conflictResolved = true; // Flag to check if conflicts are resolved
 
-        duplicateShifts.forEach((duplicate) => {
-          const { day } = duplicate;
-          // Ensure the wagon exists before accessing it
-          if (schedule[duplicate.wagon]) {
-            // Clear the conflicting shift
-            if (
-              schedule[duplicate.wagon][day].morning ===
-                selectedEmployee.name &&
-              shiftType !== "morning"
-            ) {
-              schedule[duplicate.wagon][day].morning = "";
-            }
-            if (
-              schedule[duplicate.wagon][day].afternoon ===
-                selectedEmployee.name &&
-              shiftType !== "afternoon"
-            ) {
-              schedule[duplicate.wagon][day].afternoon = "";
-            }
+        // Check for duplicate shifts and replace them if necessary
+        let duplicateShifts = findDuplicateShifts(selectedEmployee, schedule);
+        do {
+          console.log("Duplicate shifts:", duplicateShifts);
+          if (duplicateShifts.length > 0) {
+            conflictResolved = false; // Conflicts are not resolved yet
+
+            duplicateShifts.forEach((duplicate) => {
+              const { day } = duplicate;
+              const otherWagon = duplicate.wagons
+                .split(",")
+                .find((w) => w !== shiftToRemove.wagon);
+              if (schedule[otherWagon] && schedule[otherWagon][day]) {
+                if (
+                  schedule[otherWagon][day].morning === selectedEmployee.name
+                ) {
+                  console.log(
+                    "Cleared morning shift due to conflict:",
+                    schedule[otherWagon][day].morning,
+                    "on",
+                    day,
+                    "at",
+                    otherWagon
+                  );
+                  schedule[otherWagon][day].morning = "";
+                  // Assign a new employee to the cleared shift
+                  assignEmployeeToShift(
+                    employeesList,
+                    schedule,
+                    otherWagon,
+                    day,
+                    "morning"
+                  );
+                }
+                if (
+                  schedule[otherWagon][day].afternoon === selectedEmployee.name
+                ) {
+                  console.log(
+                    "Cleared afternoon shift due to conflict:",
+                    schedule[otherWagon][day].afternoon,
+                    "on",
+                    day,
+                    "at",
+                    otherWagon
+                  );
+                  schedule[otherWagon][day].afternoon = "";
+                  // Assign a new employee to the cleared shift
+                  assignEmployeeToShift(
+                    employeesList,
+                    schedule,
+                    otherWagon,
+                    day,
+                    "afternoon"
+                  );
+                }
+              }
+            });
+
+            // Check for duplicate shifts again after reassignment
+            duplicateShifts = findDuplicateShifts(selectedEmployee, schedule);
+          } else {
+            conflictResolved = true; // No conflicts found, exit the loop
           }
-        });
+        } while (!conflictResolved);
       } else {
         console.log(
           `No available employee found to replace the removed shift at ${wagon} on ${day} ${shiftType}`
@@ -305,76 +346,53 @@ const equalizeShifts = (schedule, employeesList) => {
     console.log("No changes were made.");
   }
 
-  // If no excess shifts were removed, find someone with fewer shifts than requested
-  if (!changeMade) {
-    let maxShortfall = -Infinity;
-    let employeeMostInNeed = null;
-
-    // Find the employee with the biggest shortfall
-    for (const employee of employeesList) {
-      const { name, shifts } = employee;
-      let assignedShifts = 0;
-      Object.keys(schedule).forEach((wagon) => {
-        Object.keys(schedule[wagon]).forEach((day) => {
-          if (schedule[wagon][day].morning === name) {
-            assignedShifts++;
-          }
-          if (schedule[wagon][day].afternoon === name) {
-            assignedShifts++;
-          }
-        });
-      });
-
-      const shortfall = shifts - assignedShifts;
-      if (shortfall > maxShortfall) {
-        maxShortfall = shortfall;
-        employeeMostInNeed = employee;
-      }
-    }
-
-    if (employeeMostInNeed && maxShortfall > 0) {
-      const { name, shiftAvailability, wagonPreferences } = employeeMostInNeed;
-
-      // Attempt to find and reassign a shift
-      let assigned = false;
-      outerLoop: for (const wagon of wagonPreferences) {
-        for (const shiftType of ["morning", "afternoon"]) {
-          for (const day of Object.keys(schedule[wagon])) {
-            if (
-              shiftAvailability[shiftType][
-                Object.keys(schedule[wagon]).indexOf(day)
-              ] &&
-              schedule[wagon][day][shiftType] !== name // ensure we're not taking from the same person
-            ) {
-              const originalEmployeeName = schedule[wagon][day][shiftType];
-              schedule[wagon][day][shiftType] = name;
-              console.log(
-                `Shift reassigned from ${originalEmployeeName} to ${name} at ${wagon} on ${day} ${shiftType}`
-              );
-              assigned = true;
-              break outerLoop;
-            }
-          }
-        }
-      }
-
-      if (assigned) {
-        changeMade = true;
-        console.log("Equalized shift (shortfall corrected):", schedule);
-        return schedule;
-      } else {
-        console.log(
-          `No suitable shift found for ${name}. Shift preferences:`,
-          shiftAvailability
-        );
-      }
-    }
-  }
-
-  if (!changeMade) {
-    console.log("No changes were made.");
-  }
   return schedule;
+};
+
+const assignEmployeeToShift = (
+  employeesList,
+  schedule,
+  wagon,
+  day,
+  shiftType
+) => {
+  const shiftAvailability = employeesList.map(
+    (employee) => employee.shiftAvailability
+  );
+  const wagonPreferences = employeesList.map(
+    (employee) => employee.wagonPreferences
+  );
+  const availableEmployees = employeesList.filter(
+    (employee, index) =>
+      wagonPreferences[index].includes(wagon) &&
+      shiftAvailability[index][shiftType][days.indexOf(day)] &&
+      !isEmployeeAssignedToShift(schedule, employee.name, wagon, day, shiftType)
+  );
+
+  console.log("Available employees for replacement:", availableEmployees);
+
+  if (availableEmployees.length > 0) {
+    const selectedEmployee =
+      availableEmployees[Math.floor(Math.random() * availableEmployees.length)];
+    schedule[wagon][day][shiftType] = selectedEmployee.name;
+    console.log(
+      `Reassigned shift to ${selectedEmployee.name} at ${wagon} on ${day} ${shiftType}`
+    );
+  } else {
+    console.log(
+      `No available employee found to replace the removed shift at ${wagon} on ${day} ${shiftType}`
+    );
+  }
+};
+
+const isEmployeeAssignedToShift = (
+  schedule,
+  employeeName,
+  wagon,
+  day,
+  shiftType
+) => {
+  return schedule[wagon][day][shiftType] === employeeName;
 };
 
 const findAvailableSlot = (
@@ -478,3 +496,74 @@ export {
   equalizeShifts,
   getDayIndex,
 };
+
+/* SECOND PART OF EQUALIZESHIFTS:
+// If no excess shifts were removed, find someone with fewer shifts than requested
+if (!changeMade) {
+  let maxShortfall = -Infinity;
+  let employeeMostInNeed = null;
+
+  // Find the employee with the biggest shortfall
+  for (const employee of employeesList) {
+    const { name, shifts } = employee;
+    let assignedShifts = 0;
+    Object.keys(schedule).forEach((wagon) => {
+      Object.keys(schedule[wagon]).forEach((day) => {
+        if (schedule[wagon][day].morning === name) {
+          assignedShifts++;
+        }
+        if (schedule[wagon][day].afternoon === name) {
+          assignedShifts++;
+        }
+      });
+    });
+
+    const shortfall = shifts - assignedShifts;
+    if (shortfall > maxShortfall) {
+      maxShortfall = shortfall;
+      employeeMostInNeed = employee;
+    }
+  }
+
+  if (employeeMostInNeed && maxShortfall > 0) {
+    const { name, shiftAvailability, wagonPreferences } = employeeMostInNeed;
+
+    // Attempt to find and reassign a shift
+    let assigned = false;
+    outerLoop: for (const wagon of wagonPreferences) {
+      for (const shiftType of ["morning", "afternoon"]) {
+        for (const day of Object.keys(schedule[wagon])) {
+          if (
+            shiftAvailability[shiftType][
+              Object.keys(schedule[wagon]).indexOf(day)
+            ] &&
+            schedule[wagon][day][shiftType] !== name // ensure we're not taking from the same person
+          ) {
+            const originalEmployeeName = schedule[wagon][day][shiftType];
+            schedule[wagon][day][shiftType] = name;
+            console.log(
+              `Shift reassigned from ${originalEmployeeName} to ${name} at ${wagon} on ${day} ${shiftType}`
+            );
+            assigned = true;
+            break outerLoop;
+          }
+        }
+      }
+    }
+
+    if (assigned) {
+      changeMade = true;
+      console.log("Equalized shift (shortfall corrected):", schedule);
+      return schedule;
+    } else {
+      console.log(
+        `No suitable shift found for ${name}. Shift preferences:`,
+        shiftAvailability
+      );
+    }
+  }
+}
+
+if (!changeMade) {
+  console.log("No changes were made.");
+} */
