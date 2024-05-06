@@ -185,9 +185,10 @@ const removeDuplicateShifts = (schedule, employeesList) => {
 };
 
 const equalizeShifts = (schedule, employeesList) => {
-  const randomNumber = Math.random();
+  const randomNumber = Math.random(); // Generate a random number between 0 and 1
 
   if (randomNumber < 0.5) {
+    // Part 1: Attempt to remove an excess shift
     let changeMade = false;
 
     for (const employee of employeesList) {
@@ -345,6 +346,7 @@ const equalizeShifts = (schedule, employeesList) => {
 
         console.log("Equalized shift (excess removed and replaced):", schedule);
         changeMade = true;
+        break; // Exit the loop once a change is made
       }
     }
 
