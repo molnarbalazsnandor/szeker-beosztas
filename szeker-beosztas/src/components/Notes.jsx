@@ -1,12 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // Notes.jsx
 import React, { useEffect, useState } from "react";
 import { Paper, Box, Button, Typography } from "@mui/material";
-import {
-  wagons,
-  days,
-  findDuplicateShifts,
-  getDayIndex,
-} from "./scheduleUtils";
+import { findDuplicateShifts, getDayIndex } from "./scheduleUtils";
 
 const Notes = ({ schedule, employeesList, handlePrint }) => {
   const [notes, setNotes] = useState([]);
@@ -18,7 +14,7 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
   const generateNotes = () => {
     const newNotes = [];
     employeesList.forEach((employee) => {
-      const { name, shifts, shiftAvailability, wagonPreferences } = employee;
+      const { name, shifts, wagonPreferences } = employee;
       const assignedShifts = calculateAssignedShifts(employee);
       if (assignedShifts !== shifts) {
         newNotes.push(
@@ -238,3 +234,4 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
 };
 
 export default Notes;
+/* eslint-disable react-hooks/exhaustive-deps */
