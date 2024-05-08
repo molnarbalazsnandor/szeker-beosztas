@@ -131,7 +131,7 @@ const fillRemainingShifts = (schedule, employeesList) => {
         ) {
           // Find an employee who prefers the current wagon and is available during this shift
           const availableEmployees = employeesList.filter((employee) => {
-            const { name, shiftAvailability, wagonPreferences } = employee;
+            const { shiftAvailability, wagonPreferences } = employee;
             return (
               wagonPreferences.includes(wagon) &&
               shiftAvailability[shiftType][days.indexOf(day)]
@@ -294,7 +294,6 @@ const equalizeShifts = (schedule, employeesList) => {
                       "at",
                       otherWagon
                     );
-                    schedule[otherWagon][day].morning = "";
                     // Assign a new employee to the cleared shift
                     assignEmployeeToShift(
                       employeesList,
@@ -317,7 +316,6 @@ const equalizeShifts = (schedule, employeesList) => {
                       "at",
                       otherWagon
                     );
-                    schedule[otherWagon][day].afternoon = "";
                     // Assign a new employee to the cleared shift
                     assignEmployeeToShift(
                       employeesList,
@@ -332,7 +330,6 @@ const equalizeShifts = (schedule, employeesList) => {
               });
 
               // Check for duplicate shifts again after reassignment
-              console.log("kutyafasz", schedule);
               duplicateShifts = findDuplicateShifts(selectedEmployee, schedule);
             } else {
               conflictResolved = true; // No conflicts found, exit the loop
@@ -521,7 +518,7 @@ const assignEmployeeToShift = (
   wagon,
   day,
   shiftType,
-  removedEmployeeName // Added parameter for the name of the removed employee
+  removedEmployeeName
 ) => {
   const shiftAvailability = employeesList.map(
     (employee) => employee.shiftAvailability

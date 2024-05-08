@@ -9,12 +9,12 @@ import {
   fillRemainingShifts,
   equalizeShifts,
 } from "./components/scheduleUtils";
-import testEmployeesList from "./components/testEmployeesList";
+/* import testEmployeesList from "./components/testEmployeesList"; */
 import "./App.css";
 
 const App = () => {
   const [schedule, setSchedule] = useState(createInitialSchedule());
-  const [employeesList, setEmployeesList] = useState(testEmployeesList);
+  const [employeesList, setEmployeesList] = useState([]);
   const [isSortClicked, setIsSortClicked] = useState(false);
 
   let theme = createTheme({
