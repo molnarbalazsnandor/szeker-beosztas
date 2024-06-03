@@ -1,10 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // Notes.jsx
 import React, { useEffect, useState } from "react";
-import { Paper, Box, Button, Typography } from "@mui/material";
-import { findDuplicateShifts, getDayIndex } from "./scheduleUtils";
+import {
+  Paper,
+  Box,
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import {
+  findDuplicateShifts,
+  getDayIndex,
+  createInitialSchedule,
+} from "./scheduleUtils";
 
-const Notes = ({ schedule, employeesList, handlePrint }) => {
+const Notes = ({ schedule, setSchedule, employeesList, handlePrint }) => {
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
@@ -104,6 +117,18 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
     return unavailableShifts;
   };
 
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+
+  const handleConfirmClearSchedule = () => {
+    setOpenConfirmDialog(true);
+  };
+
+  const handleClearSchedule = () => {
+    setSchedule(createInitialSchedule());
+    localStorage.removeItem("schedule");
+    setOpenConfirmDialog(false);
+  };
+
   return (
     <Paper
       className="notes-box"
@@ -149,6 +174,14 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
         }}
       >
         Beosztás lementése
+      </Button>
+      <Button
+        variant="contained"
+        color="error"
+        style={{ marginTop: "30px", backgroundColor: "rgba(50, 49, 49, 1)" }}
+        onClick={handleConfirmClearSchedule}
+      >
+        Beosztás törlése
       </Button>
       <Paper
         style={{
@@ -229,6 +262,34 @@ const Notes = ({ schedule, employeesList, handlePrint }) => {
           </Typography>
         </Box>
       </Paper>
+      <Dialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+      >
+        <DialogTitle>Beosztás törlése</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Biztosan törölni szeretnéd a beosztást?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleClearSchedule}
+            variant="contained"
+            color="error"
+          >
+            Igen
+          </Button>
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "rgba(112, 112, 112, 1)" }}
+            onClick={() => setOpenConfirmDialog(false)}
+            autoFocus
+          >
+            Mégse
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

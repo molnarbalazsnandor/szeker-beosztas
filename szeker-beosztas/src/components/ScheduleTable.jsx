@@ -17,7 +17,12 @@ import { wagons, days } from "./scheduleUtils";
 import Notes from "./Notes";
 import html2canvas from "html2canvas";
 
-const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
+const ScheduleTable = ({
+  schedule,
+  setSchedule,
+  employeesList,
+  onAssignEmployee,
+}) => {
   const tableRef = useRef(null);
 
   // Function to get the days of the next week
@@ -187,6 +192,7 @@ const ScheduleTable = ({ schedule, employeesList, onAssignEmployee }) => {
       </TableContainer>
       <Notes
         schedule={schedule}
+        setSchedule={setSchedule}
         employeesList={employeesList}
         handlePrint={handlePrint}
       />

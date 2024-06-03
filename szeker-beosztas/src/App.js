@@ -13,7 +13,10 @@ import {
 import "./App.css";
 
 const App = () => {
-  const [schedule, setSchedule] = useState(createInitialSchedule());
+  const [schedule, setSchedule] = useState(() => {
+    const storedSchedule = JSON.parse(localStorage.getItem("schedule"));
+    return storedSchedule || createInitialSchedule();
+  });
   const [employeesList, setEmployeesList] = useState([]);
   const [isSortClicked, setIsSortClicked] = useState(false);
 
@@ -42,6 +45,11 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem("employeesList", JSON.stringify(employeesList));
   }, [employeesList]);
+
+  // Save schedule to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("schedule", JSON.stringify(schedule));
+  }, [schedule]);
 
   const handleAddEmployee = (employee) => {
     const updatedEmployeesList = [...employeesList, employee];
@@ -135,6 +143,7 @@ const App = () => {
           >
             <ScheduleTable
               schedule={schedule}
+              setSchedule={setSchedule}
               employeesList={employeesList}
               onAssignEmployee={handleAssignEmployee}
             />
