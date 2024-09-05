@@ -38,6 +38,7 @@
   text-align: center;
 }
 .schedule-table-box .Abigél,
+.schedule-table-box .Bethlen,
 .schedule-table-box .Csehov,
 .schedule-table-box .Désiré,
 .schedule-table-box .Manfréd,
@@ -46,15 +47,4 @@
 }
 .schedule-table-box .afternoon {
   background-color: rgba(93, 91, 91, 0.4);
-}
-.schedule-table-box .cell-highlight {
-  animation: highlight 0.5s ease-out;
-}
-@keyframes highlight {
-  from {
-    background-color: yellow;
-  }
-  to {
-    background-color: inherit;
-  }
 }/*# sourceMappingURL=ScheduleTable.css.map */

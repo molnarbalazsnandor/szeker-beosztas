@@ -1,9 +1,17 @@
 const wagons = {
   Abigél: {
-    morning: [true, true, true, true, true, false, false],
-    afternoon: [true, true, true, true, true, false, false],
+    morning: [true, true, true, true, true, true, false],
+    afternoon: [true, true, true, true, true, true, false],
+  },
+  Antoine: {
+    morning: [true, true, true, true, true, true, false],
+    afternoon: [true, true, true, true, true, true, false],
   },
   Bethlen: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
+  Corvina: {
     morning: [true, true, true, true, true, true, true],
     afternoon: [true, true, true, true, true, true, true],
   },
@@ -25,7 +33,7 @@ const wagons = {
   },
   Manfréd: {
     morning: [true, true, true, true, true, true, false],
-    afternoon: [true, true, true, true, true, false, false],
+    afternoon: [true, true, true, true, true, true, false],
   },
   Nyugati: {
     morning: [true, true, true, true, true, true, true],
@@ -54,7 +62,7 @@ const days = [
 const createInitialSchedule = () => {
   const initialSchedule = {};
   Object.keys(wagons).forEach((wagon) => {
-    initialSchedule[wagon] = {};
+    initialSchedule[wagon] = {}; // Initialize the wagon key
     days.forEach((day) => {
       initialSchedule[wagon][day] = { morning: "", afternoon: "" };
     });
