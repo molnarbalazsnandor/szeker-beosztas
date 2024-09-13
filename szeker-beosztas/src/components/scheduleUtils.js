@@ -118,21 +118,14 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
 
       // If a slot is found and the employee hasn't reached the requested shifts limit, assign the employee to that slot
       if (slot && shiftsAssigned < shifts) {
-        // Check if the shift is already fixed
-        if (schedule[slot.wagon][slot.day][shiftType].isFixed) {
-          return; // Skip this shift as it's fixed
-        }
-
-        // Assign the employee to the slot
-        schedule[slot.wagon][slot.day][shiftType] = {
-          employee: name,
-          isFixed: false,
-        };
+        // Assign the employee to the slot using the new structure
+        schedule[slot.wagon][slot.day][shiftType].employee = name;
         employeeAssignments[slot.day].push(name);
         shiftsAssigned++;
       }
     });
   });
+
   return schedule;
 };
 
@@ -146,7 +139,7 @@ const fillRemainingShifts = (schedule, employeesList) => {
       Object.keys(schedule[wagon][day]).forEach((shiftType) => {
         // Check if the current shift is empty and if the wagon is open for this shift on this day
         if (
-          schedule[wagon][day][shiftType] === "" &&
+          schedule[wagon][day][shiftType].employee === "" &&
           wagons[wagon][shiftType][days.indexOf(day)]
         ) {
           // Find an employee who prefers the current wagon and is available during this shift
@@ -164,7 +157,9 @@ const fillRemainingShifts = (schedule, employeesList) => {
               availableEmployees[
                 Math.floor(Math.random() * availableEmployees.length)
               ];
-            schedule[wagon][day][shiftType] = selectedEmployee.name;
+            schedule[wagon][day][shiftType] = {
+              employee: selectedEmployee.name,
+            };
           }
         }
       });
@@ -190,12 +185,12 @@ const removeDuplicateShifts = (schedule, employeesList) => {
         duplicateShifts.forEach((duplicate) => {
           const { day } = duplicate;
           // Clear the morning shift if it matches the employee
-          if (schedule[wagon][day].morning === employee.name) {
-            schedule[wagon][day].morning = "";
+          if (schedule[wagon][day].morning.employee === employee.name) {
+            schedule[wagon][day].morning.employee = "";
           }
           // Clear the afternoon shift if it matches the employee
-          if (schedule[wagon][day].afternoon === employee.name) {
-            schedule[wagon][day].afternoon = "";
+          if (schedule[wagon][day].afternoon.employee === employee.name) {
+            schedule[wagon][day].afternoon.employee = "";
           }
         });
       }
@@ -214,26 +209,28 @@ const equalizeShifts = (schedule, employeesList) => {
     for (const employee of employeesList) {
       const { name, shifts } = employee;
 
+      // Calculate the number of assigned shifts for the current employee
       let assignedShifts = 0;
       Object.keys(schedule).forEach((wagon) => {
         Object.keys(schedule[wagon]).forEach((day) => {
-          if (schedule[wagon][day].morning === name) {
+          if (schedule[wagon][day].morning.employee === name) {
             assignedShifts++;
           }
-          if (schedule[wagon][day].afternoon === name) {
+          if (schedule[wagon][day].afternoon.employee === name) {
             assignedShifts++;
           }
         });
       });
 
+      // Check if the employee has more shifts than required
       if (assignedShifts > shifts) {
         const excessShifts = [];
         Object.keys(schedule).forEach((wagon) => {
           Object.keys(schedule[wagon]).forEach((day) => {
             if (
-              (schedule[wagon][day].morning === name &&
+              (schedule[wagon][day].morning.employee === name &&
                 excessShifts.length < assignedShifts - shifts) ||
-              (schedule[wagon][day].afternoon === name &&
+              (schedule[wagon][day].afternoon.employee === name &&
                 excessShifts.length < assignedShifts - shifts)
             ) {
               excessShifts.push({ wagon, day });
@@ -251,10 +248,12 @@ const equalizeShifts = (schedule, employeesList) => {
 
         // Remove the selected excess shift
         const shiftType =
-          schedule[shiftToRemove.wagon][shiftToRemove.day].morning === name
+          schedule[shiftToRemove.wagon][shiftToRemove.day].morning.employee ===
+          name
             ? "morning"
             : "afternoon";
-        schedule[shiftToRemove.wagon][shiftToRemove.day][shiftType] = "";
+        schedule[shiftToRemove.wagon][shiftToRemove.day][shiftType].employee =
+          "";
         console.log(
           `Removed excess shift from ${name} at ${shiftToRemove.wagon} on ${shiftToRemove.day} ${shiftType}`
         );
@@ -262,16 +261,10 @@ const equalizeShifts = (schedule, employeesList) => {
 
         // Find an available employee to assign the replacement shift
         const { wagon, day } = shiftToRemove;
-        const shiftAvailability = employeesList.map(
-          (employee) => employee.shiftAvailability
-        );
-        const wagonPreferences = employeesList.map(
-          (employee) => employee.wagonPreferences
-        );
         const availableEmployees = employeesList.filter(
-          (employee, index) =>
-            wagonPreferences[index].includes(wagon) &&
-            shiftAvailability[index][shiftType][days.indexOf(day)] &&
+          (employee) =>
+            employee.wagonPreferences.includes(wagon) &&
+            employee.shiftAvailability[shiftType][days.indexOf(day)] &&
             employee.name !== name // Ensure the replacement shift is not assigned to the same person
         );
 
@@ -283,7 +276,7 @@ const equalizeShifts = (schedule, employeesList) => {
             availableEmployees[
               Math.floor(Math.random() * availableEmployees.length)
             ];
-          schedule[wagon][day][shiftType] = selectedEmployee.name;
+          schedule[wagon][day][shiftType].employee = selectedEmployee.name;
           console.log(
             `Reassigned shift to ${selectedEmployee.name} at ${wagon} on ${day} ${shiftType}`
           );
@@ -304,11 +297,12 @@ const equalizeShifts = (schedule, employeesList) => {
                   .find((w) => w !== shiftToRemove.wagon);
                 if (schedule[otherWagon] && schedule[otherWagon][day]) {
                   if (
-                    schedule[otherWagon][day].morning === selectedEmployee.name
+                    schedule[otherWagon][day].morning.employee ===
+                    selectedEmployee.name
                   ) {
                     console.log(
                       "Cleared morning shift due to conflict:",
-                      schedule[otherWagon][day].morning,
+                      schedule[otherWagon][day].morning.employee,
                       "on",
                       day,
                       "at",
@@ -321,16 +315,16 @@ const equalizeShifts = (schedule, employeesList) => {
                       otherWagon,
                       day,
                       "morning",
-                      schedule[otherWagon][day].morning
+                      schedule[otherWagon][day].morning.employee
                     );
                   }
                   if (
-                    schedule[otherWagon][day].afternoon ===
+                    schedule[otherWagon][day].afternoon.employee ===
                     selectedEmployee.name
                   ) {
                     console.log(
                       "Cleared afternoon shift due to conflict:",
-                      schedule[otherWagon][day].afternoon,
+                      schedule[otherWagon][day].afternoon.employee,
                       "on",
                       day,
                       "at",
@@ -343,7 +337,7 @@ const equalizeShifts = (schedule, employeesList) => {
                       otherWagon,
                       day,
                       "afternoon",
-                      schedule[otherWagon][day].afternoon
+                      schedule[otherWagon][day].afternoon.employee
                     );
                   }
                 }
@@ -382,10 +376,10 @@ const equalizeShifts = (schedule, employeesList) => {
       let assignedShifts = 0;
       Object.keys(schedule).forEach((wagon) => {
         Object.keys(schedule[wagon]).forEach((day) => {
-          if (schedule[wagon][day].morning === name) {
+          if (schedule[wagon][day].morning.employee === name) {
             assignedShifts++;
           }
-          if (schedule[wagon][day].afternoon === name) {
+          if (schedule[wagon][day].afternoon.employee === name) {
             assignedShifts++;
           }
         });
@@ -410,10 +404,11 @@ const equalizeShifts = (schedule, employeesList) => {
               shiftAvailability[shiftType][
                 Object.keys(schedule[wagon]).indexOf(day)
               ] &&
-              schedule[wagon][day][shiftType] !== name // ensure we're not taking from the same person
+              schedule[wagon][day][shiftType].employee !== name // ensure we're not taking from the same person
             ) {
-              const originalEmployeeName = schedule[wagon][day][shiftType];
-              schedule[wagon][day][shiftType] = name;
+              const originalEmployeeName =
+                schedule[wagon][day][shiftType].employee;
+              schedule[wagon][day][shiftType].employee = name;
               console.log(
                 `Shift reassigned from ${originalEmployeeName} to ${name} at ${wagon} on ${day} ${shiftType}`
               );
@@ -471,11 +466,12 @@ const findAvailableSlot = (
       if (wagons[wagon][shiftType][dayIndex]) {
         // Check if the employee is available for the shift on that day
         if (shiftAvailability[shiftType][dayIndex]) {
-          // Check if the wagon, day, and shift type are initialized in the schedule and empty
+          // Check if the wagon, day, and shift type are initialized in the schedule and the slot is empty
           if (
             schedule[wagon] &&
             schedule[wagon][day] &&
-            schedule[wagon][day][shiftType] === ""
+            schedule[wagon][day][shiftType] &&
+            schedule[wagon][day][shiftType].employee === ""
           ) {
             availableSlots.push({ wagon, day, shiftType });
           }
@@ -508,14 +504,24 @@ const findDuplicateShifts = (employee, schedule) => {
 
     // Check morning shift
     Object.keys(wagons).forEach((wagon) => {
-      if (schedule[wagon][day].morning === employee.name) {
+      if (
+        schedule[wagon] &&
+        schedule[wagon][day] &&
+        schedule[wagon][day].morning &&
+        schedule[wagon][day].morning.employee === employee.name
+      ) {
         duplicateWagons.add(wagon);
       }
     });
 
     // Check afternoon shift
     Object.keys(wagons).forEach((wagon) => {
-      if (schedule[wagon][day].afternoon === employee.name) {
+      if (
+        schedule[wagon] &&
+        schedule[wagon][day] &&
+        schedule[wagon][day].afternoon &&
+        schedule[wagon][day].afternoon.employee === employee.name
+      ) {
         duplicateWagons.add(wagon);
       }
     });
