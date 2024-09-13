@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from "react";
 import { Box, Typography, createTheme, ThemeProvider } from "@mui/material";
 import ScheduleTable from "./components/ScheduleTable";
@@ -9,7 +8,7 @@ import {
   fillRemainingShifts,
   equalizeShifts,
 } from "./components/scheduleUtils";
-/* import testEmployeesList from "./components/testEmployeesList"; */
+import testEmployeesList from "./components/testEmployeesList";
 import "./App.css";
 
 const App = () => {
@@ -17,7 +16,7 @@ const App = () => {
     const storedSchedule = JSON.parse(localStorage.getItem("schedule"));
     return storedSchedule || createInitialSchedule();
   });
-  const [employeesList, setEmployeesList] = useState([]);
+  const [employeesList, setEmployeesList] = useState(testEmployeesList);
   const [isSortClicked, setIsSortClicked] = useState(false);
 
   let theme = createTheme({
@@ -65,11 +64,17 @@ const App = () => {
         newSchedule[wagon] = {};
       }
       if (!newSchedule[wagon][day]) {
-        newSchedule[wagon][day] = { morning: "", afternoon: "" };
+        newSchedule[wagon][day] = {
+          morning: { employee: "", isFixed: false },
+          afternoon: { employee: "", isFixed: false },
+        };
       }
 
       // Update the employee for the specified shift
-      newSchedule[wagon][day][shiftType] = employee;
+      newSchedule[wagon][day][shiftType] = {
+        employee: employee,
+        isFixed: false, // Set isFixed to false when manually assigning
+      };
 
       console.log("App.js Updated Schedule:", newSchedule);
       return newSchedule;
@@ -77,11 +82,10 @@ const App = () => {
   };
 
   const handleSortEmployees = () => {
-    const initialSchedule = createInitialSchedule();
-    setSchedule(initialSchedule);
+    const currentSchedule = { ...schedule };
 
     const updatedSchedule = sortEmployeesIntoSchedule(
-      { ...initialSchedule },
+      currentSchedule,
       employeesList
     );
 

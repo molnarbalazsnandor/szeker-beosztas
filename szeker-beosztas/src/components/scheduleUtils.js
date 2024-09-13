@@ -64,7 +64,10 @@ const createInitialSchedule = () => {
   Object.keys(wagons).forEach((wagon) => {
     initialSchedule[wagon] = {}; // Initialize the wagon key
     days.forEach((day) => {
-      initialSchedule[wagon][day] = { morning: "", afternoon: "" };
+      initialSchedule[wagon][day] = {
+        morning: { employee: "", isFixed: false },
+        afternoon: { employee: "", isFixed: false },
+      };
     });
   });
   return initialSchedule;
@@ -115,7 +118,16 @@ const sortEmployeesIntoSchedule = (schedule, employeesList) => {
 
       // If a slot is found and the employee hasn't reached the requested shifts limit, assign the employee to that slot
       if (slot && shiftsAssigned < shifts) {
-        schedule[slot.wagon][slot.day][shiftType] = name;
+        // Check if the shift is already fixed
+        if (schedule[slot.wagon][slot.day][shiftType].isFixed) {
+          return; // Skip this shift as it's fixed
+        }
+
+        // Assign the employee to the slot
+        schedule[slot.wagon][slot.day][shiftType] = {
+          employee: name,
+          isFixed: false,
+        };
         employeeAssignments[slot.day].push(name);
         shiftsAssigned++;
       }

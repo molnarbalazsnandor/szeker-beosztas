@@ -11,6 +11,7 @@ import {
   MenuItem,
   Box,
   Typography,
+  Checkbox,
 } from "@mui/material";
 import "./ScheduleTable.css";
 import { wagons, days } from "./scheduleUtils";
@@ -88,6 +89,15 @@ const ScheduleTable = ({
     return wagons[wagon][shiftType][dayIndex];
   };
 
+  const handleFixedShiftChange = (wagon, day, shiftType, isFixed) => {
+    setSchedule((prevSchedule) => {
+      const newSchedule = { ...prevSchedule };
+      newSchedule[wagon][day][shiftType].isFixed = isFixed;
+      console.log(newSchedule);
+      return newSchedule;
+    });
+  };
+
   return (
     <Box className="schedule-table-box">
       <TableContainer component={Paper}>
@@ -138,52 +148,78 @@ const ScheduleTable = ({
                   >
                     {shiftType === "morning" ? "D.előtt" : "D.után"}
                   </TableCell>
-                  {days.map((day, index) => (
-                    <TableCell
-                      key={`${wagon}-${day}-${shiftType}`}
-                      className={`schedule-cell ${day} ${shiftType}`}
-                    >
-                      {isWagonOpen(wagon, days.indexOf(day), shiftType) ? (
-                        <Select
-                          value={schedule[wagon]?.[day]?.[shiftType] || ""}
-                          onChange={(e) =>
-                            onAssignEmployee(
-                              wagon,
-                              day,
-                              shiftType,
-                              e.target.value
-                            )
-                          }
-                          labelId={`${wagon}-${day}-${shiftType}-label`}
-                          className="schedule-select"
-                        >
-                          <MenuItem value="">(üres)</MenuItem>
-                          {employeesList
-                            .sort((a, b) =>
-                              compareHungarianStrings(a.name, b.name)
-                            )
-                            .map((employee) => (
-                              <MenuItem
-                                key={employee.name}
-                                value={employee.name}
-                                style={{
-                                  color: getColorForEmployee(
-                                    employee,
-                                    wagon,
-                                    days.indexOf(day),
-                                    shiftType
-                                  ),
-                                }}
-                              >
-                                {employee.name}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      ) : (
-                        <Typography variant="body1">------</Typography>
-                      )}
-                    </TableCell>
-                  ))}
+                  {days.map((day, index) => {
+                    const shift = schedule[wagon]?.[day]?.[shiftType];
+                    const isFixed = shift?.isFixed || false;
+                    const employeeName = shift?.employee || "";
+
+                    return (
+                      <TableCell
+                        key={`${wagon}-${day}-${shiftType}`}
+                        className={`schedule-cell ${day} ${shiftType}`}
+                      >
+                        {isWagonOpen(wagon, days.indexOf(day), shiftType) ? (
+                          <>
+                            <Checkbox
+                              checked={isFixed}
+                              onChange={(e) =>
+                                handleFixedShiftChange(
+                                  wagon,
+                                  day,
+                                  shiftType,
+                                  e.target.checked
+                                )
+                              }
+                              style={{
+                                position: "absolute",
+                                top: "0px",
+                                right: "4.5px",
+                                padding: "0px",
+                              }}
+                            />
+                            <Select
+                              value={employeeName}
+                              onChange={(e) =>
+                                !isFixed &&
+                                onAssignEmployee(
+                                  wagon,
+                                  day,
+                                  shiftType,
+                                  e.target.value
+                                )
+                              }
+                              labelId={`${wagon}-${day}-${shiftType}-label`}
+                              className="schedule-select"
+                            >
+                              <MenuItem value="">(üres)</MenuItem>
+                              {employeesList
+                                .sort((a, b) =>
+                                  compareHungarianStrings(a.name, b.name)
+                                )
+                                .map((employee) => (
+                                  <MenuItem
+                                    key={employee.name}
+                                    value={employee.name}
+                                    style={{
+                                      color: getColorForEmployee(
+                                        employee,
+                                        wagon,
+                                        days.indexOf(day),
+                                        shiftType
+                                      ),
+                                    }}
+                                  >
+                                    {employee.name}
+                                  </MenuItem>
+                                ))}
+                            </Select>
+                          </>
+                        ) : (
+                          <Typography variant="body1">------</Typography>
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             )}

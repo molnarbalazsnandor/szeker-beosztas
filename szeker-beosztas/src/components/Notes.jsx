@@ -72,10 +72,10 @@ const Notes = ({ schedule, setSchedule, employeesList, handlePrint }) => {
     let assignedShifts = 0;
     Object.keys(schedule).forEach((wagon) => {
       Object.keys(schedule[wagon]).forEach((day) => {
-        if (schedule[wagon][day].morning === employee.name) {
+        if (schedule[wagon][day].morning.employee === employee.name) {
           assignedShifts++;
         }
-        if (schedule[wagon][day].afternoon === employee.name) {
+        if (schedule[wagon][day].afternoon.employee === employee.name) {
           assignedShifts++;
         }
       });
@@ -87,10 +87,10 @@ const Notes = ({ schedule, setSchedule, employeesList, handlePrint }) => {
     const assignedWagons = new Set();
     Object.keys(schedule).forEach((wagon) => {
       Object.keys(schedule[wagon]).forEach((day) => {
-        if (schedule[wagon][day].morning === employee.name) {
+        if (schedule[wagon][day].morning.employee === employee.name) {
           assignedWagons.add(wagon);
         }
-        if (schedule[wagon][day].afternoon === employee.name) {
+        if (schedule[wagon][day].afternoon.employee === employee.name) {
           assignedWagons.add(wagon);
         }
       });
@@ -103,12 +103,12 @@ const Notes = ({ schedule, setSchedule, employeesList, handlePrint }) => {
     Object.keys(schedule).forEach((wagon) => {
       Object.keys(schedule[wagon]).forEach((day) => {
         if (!employee.shiftAvailability.morning[getDayIndex(day)]) {
-          if (schedule[wagon][day].morning === employee.name) {
+          if (schedule[wagon][day].morning.employee === employee.name) {
             unavailableShifts.push({ day, shift: "morning" });
           }
         }
         if (!employee.shiftAvailability.afternoon[getDayIndex(day)]) {
-          if (schedule[wagon][day].afternoon === employee.name) {
+          if (schedule[wagon][day].afternoon.employee === employee.name) {
             unavailableShifts.push({ day, shift: "afternoon" });
           }
         }
