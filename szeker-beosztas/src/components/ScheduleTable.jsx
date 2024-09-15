@@ -69,6 +69,7 @@ const ScheduleTable = ({
         setIsPrinting(false); // reset printing state
       });
     }
+    // eslint-disable-next-line
   }, [isPrinting]); // only runs when `isPrinting` changes
 
   const handlePrint = () => {
