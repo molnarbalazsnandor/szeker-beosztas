@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,9 @@ const ScheduleTable = ({
 }) => {
   const tableRef = useRef(null);
 
+  const [isCheckboxVisible, setIsCheckboxVisible] = useState(true);
+  const [isPrinting, setIsPrinting] = useState(false);
+
   // Function to get the days of the next week
   const dates = getDatesOfWeek();
   function getDatesOfWeek() {
@@ -49,8 +52,9 @@ const ScheduleTable = ({
     return dates;
   }
 
-  const handlePrint = () => {
-    if (tableRef.current) {
+  // This useEffect will trigger after `isPrinting` is set to `true`
+  useEffect(() => {
+    if (isPrinting && tableRef.current) {
       html2canvas(tableRef.current).then((canvas) => {
         const imgData = canvas.toDataURL("image/jpeg");
         const link = document.createElement("a");
@@ -59,8 +63,17 @@ const ScheduleTable = ({
           dates[dates.length - 1]
         } könyvmentők beosztás.jpg`;
         link.click();
+
+        // Once done, show the checkboxes again
+        setIsCheckboxVisible(true);
+        setIsPrinting(false); // reset printing state
       });
     }
+  }, [isPrinting]); // only runs when `isPrinting` changes
+
+  const handlePrint = () => {
+    setIsCheckboxVisible(false);
+    setIsPrinting(true);
   };
 
   const compareHungarianStrings = (a, b) => {
@@ -93,7 +106,6 @@ const ScheduleTable = ({
     setSchedule((prevSchedule) => {
       const newSchedule = { ...prevSchedule };
       newSchedule[wagon][day][shiftType].isFixed = isFixed;
-      console.log(newSchedule);
       return newSchedule;
     });
   };
@@ -162,6 +174,7 @@ const ScheduleTable = ({
                           <>
                             <Checkbox
                               checked={isFixed}
+                              size="small"
                               onChange={(e) =>
                                 handleFixedShiftChange(
                                   wagon,
@@ -172,9 +185,12 @@ const ScheduleTable = ({
                               }
                               style={{
                                 position: "absolute",
-                                top: "0px",
-                                right: "4.5px",
+                                top: "2px",
+                                right: "8.5px",
                                 padding: "0px",
+                                visibility: isCheckboxVisible
+                                  ? "visible"
+                                  : "hidden",
                               }}
                             />
                             <Select
@@ -215,7 +231,7 @@ const ScheduleTable = ({
                             </Select>
                           </>
                         ) : (
-                          <Typography variant="body1">------</Typography>
+                          <Typography variant="body3">————</Typography>
                         )}
                       </TableCell>
                     );

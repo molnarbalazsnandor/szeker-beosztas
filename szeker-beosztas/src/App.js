@@ -17,7 +17,6 @@ const App = () => {
     return storedSchedule || createInitialSchedule();
   });
   const [employeesList, setEmployeesList] = useState(testEmployeesList);
-  const [isSortClicked, setIsSortClicked] = useState(false);
 
   let theme = createTheme({
     palette: {
@@ -91,7 +90,6 @@ const App = () => {
 
     console.log("Sorted Schedule:", updatedSchedule);
     setSchedule(updatedSchedule);
-    setIsSortClicked(true);
   };
 
   // Function to delete an employee
@@ -134,7 +132,6 @@ const App = () => {
             onDeleteEmployee={handleDeleteEmployee}
             onSortEmployees={handleSortEmployees}
             onFillRemainingShifts={handleFillRemainingShifts}
-            isSortClicked={isSortClicked}
             onEqualizeShift={handleEqualizeShift}
           />
           <Box

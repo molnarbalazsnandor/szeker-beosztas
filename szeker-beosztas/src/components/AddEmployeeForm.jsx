@@ -34,7 +34,6 @@ const AddEmployeeForm = ({
   onDeleteEmployee,
   onSortEmployees,
   onFillRemainingShifts,
-  isSortClicked,
   onEqualizeShift,
 }) => {
   const [employee, setEmployee] = useState({
@@ -376,8 +375,7 @@ const AddEmployeeForm = ({
             variant="contained"
             color="primary"
             className="employee-button"
-            disabled={!isSortClicked}
-            style={{ backgroundColor: isSortClicked ? "#1b2035" : "" }}
+            style={{ backgroundColor: "#1b2035" }}
           >
             Feltölt
           </Button>
@@ -386,8 +384,7 @@ const AddEmployeeForm = ({
             variant="contained"
             color="primary"
             className="employee-button"
-            disabled={!isSortClicked}
-            style={{ backgroundColor: isSortClicked ? "#1d351b" : "" }}
+            style={{ backgroundColor: "#1d351b" }}
           >
             Kiegyenlít
           </Button>

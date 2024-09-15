@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Checkbox,
 } from "@mui/material";
 import {
   findDuplicateShifts,
@@ -196,7 +197,7 @@ const Notes = ({ schedule, setSchedule, employeesList, handlePrint }) => {
         }}
       >
         <Typography style={{ alignSelf: "center" }} variant="h6">
-          Nevek színmagyarázata
+          Szín- és jelmagyarázat
         </Typography>
         <Box
           style={{
@@ -260,6 +261,23 @@ const Notes = ({ schedule, setSchedule, employeesList, handlePrint }) => {
           <Typography variant="subtitle1">
             : a könyvterjesztőnek nem alkalmas a műszak
           </Typography>
+        </Box>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Checkbox
+            style={{
+              width: "10px",
+              height: "10px",
+            }}
+            size="small"
+          ></Checkbox>
+          <Typography variant="subtitle1">: műszak rögzítése</Typography>
         </Box>
       </Paper>
       <Dialog
