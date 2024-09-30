@@ -7,6 +7,10 @@ const wagons = {
     morning: [true, true, true, true, true, true, false],
     afternoon: [true, true, true, true, true, true, false],
   },
+  Aslan: {
+    morning: [true, true, true, true, true, true, true],
+    afternoon: [true, true, true, true, true, true, true],
+  },
   Bethlen: {
     morning: [true, true, true, true, true, true, true],
     afternoon: [true, true, true, true, true, true, true],
