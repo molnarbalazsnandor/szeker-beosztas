@@ -172,6 +172,11 @@ const fillRemainingShifts = (schedule, employeesList) => {
     Object.keys(schedule[wagon]).forEach((day) => {
       // Loop through each shift type (morning and afternoon) for the current day and wagon
       Object.keys(schedule[wagon][day]).forEach((shiftType) => {
+        // Initialize the shift if it doesn't exist
+        if (!schedule[wagon][day][shiftType]) {
+          schedule[wagon][day][shiftType] = { employee: "", isFixed: false };
+        }
+
         const shift = schedule[wagon][day][shiftType];
 
         // Check if the current shift is empty, not fixed, and the wagon is open for this shift on this day
@@ -195,14 +200,9 @@ const fillRemainingShifts = (schedule, employeesList) => {
               availableEmployees[
                 Math.floor(Math.random() * availableEmployees.length)
               ];
-            if (typeof schedule[wagon][day][shiftType] === "object") {
-              schedule[wagon][day][shiftType].employee = selectedEmployee.name;
-              schedule[wagon][day][shiftType].isFixed = false;
-            } else {
-              console.error(
-                `Invalid shift structure for ${wagon} on ${day} ${shiftType}`
-              );
-            }
+            // Assign the selected employee to the shift
+            shift.employee = selectedEmployee.name;
+            shift.isFixed = false; // Ensure isFixed remains false unless specified elsewhere
           }
         }
       });
@@ -224,11 +224,12 @@ const removeDuplicateShifts = (schedule, employeesList) => {
     // Loop through each day and shift in the schedule to collect all shifts assigned to this employee
     Object.keys(schedule).forEach((wagon) => {
       Object.keys(schedule[wagon]).forEach((day) => {
+        // Access morning and afternoon shifts based on the new structure
         const morningShift = schedule[wagon][day].morning;
         const afternoonShift = schedule[wagon][day].afternoon;
 
         // Collect the morning shift if the employee is assigned
-        if (morningShift.employee === employee.name) {
+        if (morningShift && morningShift.employee === employee.name) {
           assignedShifts.push({
             wagon,
             day,
@@ -238,7 +239,7 @@ const removeDuplicateShifts = (schedule, employeesList) => {
         }
 
         // Collect the afternoon shift if the employee is assigned
-        if (afternoonShift.employee === employee.name) {
+        if (afternoonShift && afternoonShift.employee === employee.name) {
           assignedShifts.push({
             wagon,
             day,
@@ -264,7 +265,7 @@ const removeDuplicateShifts = (schedule, employeesList) => {
           dayAssignment[day] = shift; // Update the assignment to the new fixed shift, if applicable
         } else {
           // If neither shift is fixed, remove the current shift
-          schedule[shift.wagon][day][shiftType].employee = "";
+          schedule[shift.wagon][day][shiftType].employee = ""; // Clear the employee from the conflicting shift
         }
       } else {
         // No conflict yet, so just store this shift
@@ -290,10 +291,13 @@ const equalizeShifts = (schedule, employeesList) => {
       let assignedShifts = 0;
       Object.keys(schedule).forEach((wagon) => {
         Object.keys(schedule[wagon]).forEach((day) => {
-          if (schedule[wagon][day].morning.employee === name) {
+          const morningShift = schedule[wagon][day].morning;
+          const afternoonShift = schedule[wagon][day].afternoon;
+
+          if (morningShift.employee === name) {
             assignedShifts++;
           }
-          if (schedule[wagon][day].afternoon.employee === name) {
+          if (afternoonShift.employee === name) {
             assignedShifts++;
           }
         });
@@ -478,10 +482,13 @@ const equalizeShifts = (schedule, employeesList) => {
       let assignedShifts = 0;
       Object.keys(schedule).forEach((wagon) => {
         Object.keys(schedule[wagon]).forEach((day) => {
-          if (schedule[wagon][day].morning.employee === name) {
+          const morningShift = schedule[wagon][day].morning;
+          const afternoonShift = schedule[wagon][day].afternoon;
+
+          if (morningShift.employee === name) {
             assignedShifts++;
           }
-          if (schedule[wagon][day].afternoon.employee === name) {
+          if (afternoonShift.employee === name) {
             assignedShifts++;
           }
         });
@@ -502,15 +509,15 @@ const equalizeShifts = (schedule, employeesList) => {
       outerLoop: for (const wagon of wagonPreferences) {
         for (const shiftType of ["morning", "afternoon"]) {
           for (const day of Object.keys(schedule[wagon])) {
+            const currentShift = schedule[wagon][day][shiftType];
             if (
               shiftAvailability[shiftType][
                 Object.keys(schedule[wagon]).indexOf(day)
               ] &&
-              schedule[wagon][day][shiftType].employee !== name && // Ensure we're not taking from the same person
-              !schedule[wagon][day][shiftType].isFixed // Ensure the shift is not fixed
+              currentShift.employee !== name && // Ensure we're not taking from the same person
+              !currentShift.isFixed // Ensure the shift is not fixed
             ) {
-              const originalEmployeeName =
-                schedule[wagon][day][shiftType].employee;
+              const originalEmployeeName = currentShift.employee;
               schedule[wagon][day][shiftType] = {
                 employee: name,
                 isFixed: false,

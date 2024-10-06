@@ -193,18 +193,33 @@ const ScheduleTable = ({
                                   ? "visible"
                                   : "hidden",
                               }}
+                              disabled={employeeName === ""} // Disable the checkbox if the cell is empty
                             />
                             <Select
                               value={employeeName}
-                              onChange={(e) =>
-                                !isFixed &&
-                                onAssignEmployee(
-                                  wagon,
-                                  day,
-                                  shiftType,
-                                  e.target.value
-                                )
-                              }
+                              onChange={(e) => {
+                                const newEmployeeName = e.target.value;
+
+                                // If the new employee name is empty, set `isFixed` to false first
+                                if (newEmployeeName === "" && isFixed) {
+                                  handleFixedShiftChange(
+                                    wagon,
+                                    day,
+                                    shiftType,
+                                    false
+                                  );
+                                }
+
+                                // Update the schedule with the new employee only if the shift is not fixed
+                                if (!isFixed || newEmployeeName === "") {
+                                  onAssignEmployee(
+                                    wagon,
+                                    day,
+                                    shiftType,
+                                    newEmployeeName
+                                  );
+                                }
+                              }}
                               labelId={`${wagon}-${day}-${shiftType}-label`}
                               className="schedule-select"
                             >
